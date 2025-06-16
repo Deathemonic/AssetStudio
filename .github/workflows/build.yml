@@ -49,16 +49,16 @@ jobs:
         run: msbuild /t:AssetStudioCLI /p:Configuration=Release /p:TargetFramework=net472 /verbosity:minimal
 
       - name: Build GUI .Net8
-        run: msbuild /t:AssetStudioGUI:publish /p:Configuration=Release /p:TargetFramework=net8.0-windows /p:SelfContained=true /verbosity:minimal
+        run: msbuild /t:AssetStudioGUI:publish /p:Configuration=Release /p:TargetFramework=net8.0-windows /p:SelfContained=false /verbosity:minimal
 
       - name: Build CLI .Net8
-        run: msbuild /t:AssetStudioCLI:publish /p:Configuration=Release /p:TargetFramework=net8.0 /p:SelfContained=true /verbosity:minimal
+        run: msbuild /t:AssetStudioCLI:publish /p:Configuration=Release /p:TargetFramework=net8.0 /p:SelfContained=false /verbosity:minimal
 
       - name: Build GUI .Net9
-        run: msbuild /t:AssetStudioGUI:publish /p:Configuration=Release /p:TargetFramework=net9.0-windows /p:SelfContained=true /verbosity:minimal
+        run: msbuild /t:AssetStudioGUI:publish /p:Configuration=Release /p:TargetFramework=net9.0-windows /p:SelfContained=false /verbosity:minimal
 
       - name: Build CLI .Net9
-        run: msbuild /t:AssetStudioCLI:publish /p:Configuration=Release /p:TargetFramework=net9.0 /p:SelfContained=true /verbosity:minimal
+        run: msbuild /t:AssetStudioCLI:publish /p:Configuration=Release /p:TargetFramework=net9.0 /p:SelfContained=false /verbosity:minimal
 
       - name: Upload GUI .Net472 Artifact
         uses: actions/upload-artifact@v4
