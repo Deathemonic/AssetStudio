@@ -2,9 +2,9 @@ name: AssetStudioBuild
 
 on:
   push:
-    branches: [AssetStudioMod]
+    branches: [main]
   pull_request:
-    branches: [AssetStudioMod]
+    branches: [main]
   workflow_dispatch:
 
 env:
