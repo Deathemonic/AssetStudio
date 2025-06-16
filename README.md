@@ -1,16 +1,10 @@
-# AssetStudioMod
+# AssetStudio
 
-[![Release](https://img.shields.io/github/v/release/aelurum/AssetStudio)](https://github.com/aelurum/AssetStudio/releases/latest) [![Downloads](https://img.shields.io/github/downloads/aelurum/AssetStudio/total?color=blue)](https://github.com/aelurum/AssetStudio/releases/latest) [![Download latest release](https://img.shields.io/badge/Download_latest_release-blue)](https://github.com/aelurum/AssetStudio/releases/latest)
+[![Release](https://img.shields.io/github/v/release/Deathemonic/AssetStudio)](https://github.com/aelurum/AssetStudio/releases/latest) [![Download latest release](https://img.shields.io/badge/Download_latest_release-blue)](https://github.com/Deathemonic/AssetStudio/releases/latest)
 
-[![Build status](https://ci.appveyor.com/api/projects/status/5qyai0hqs0ktyara/branch/AssetStudioMod?svg=true)](https://ci.appveyor.com/project/aelurum/assetstudiomod/branch/AssetStudioMod) [![Download latest build](https://img.shields.io/badge/Download_latest_build-brightgreen)](https://ci.appveyor.com/project/aelurum/assetstudiomod/branch/AssetStudioMod/artifacts)
-
-**AssetStudioMod** - modified version of Perfare's [AssetStudio](https://github.com/Perfare/AssetStudio), mainly focused on UI optimization and some functionality enhancements.
+**AssetStudio** - Modified version of aelurum's [AssetStudioMod](https://github.com/aelurum/AssetStudio)
 
 **Neither the repository, nor the tool, nor the author of the tool, nor the author of the modification is affiliated with, sponsored, or authorized by Unity Technologies or its affiliates.**
-
-## Game specific modifications
-
-- [ArknightsStudio](https://github.com/aelurum/AssetStudio/tree/ArknightsStudio)
 
 ## AssetStudio Features
 
@@ -28,7 +22,7 @@
   - **VideoClip**
   - **MonoBehaviour** : json
   - **Animator** : export to FBX file with bound AnimationClip
- 
+
 ## AssetStudioMod Features
 
 - CLI version (for Windows, Linux, Mac)
@@ -36,33 +30,33 @@
 - Support of sprites with alpha mask
 - Support of image export in WebP format
 - Support of Live2D Cubism model export
-   - Ported from my fork of Perfare's [UnityLive2DExtractor](https://github.com/aelurum/UnityLive2DExtractor)
+   - Ported from Arlurm's fork of Perfare's [UnityLive2DExtractor](https://github.com/aelurum/UnityLive2DExtractor)
    - Using the Live2D export in AssetStudio allows you to specify a Unity version and assembly folder if needed
 - Support of swizzled Switch textures
     - Ported from nesrak1's [AssetStudio fork](https://github.com/nesrak1/AssetStudio/tree/switch-tex-deswizzle)
 - Detecting bundles with UnityCN encryption
    - Detection only. If you want to open them, please use Razmoth's [Studio](https://github.com/RazTools/Studio)
-- Some UI optimizations and bug fixes (See [CHANGELOG](https://github.com/aelurum/AssetStudio/blob/AssetStudioMod/CHANGELOG.md) for details)
+- Some UI optimizations and bug fixes (See [CHANGELOG](https://github.com/Deathemonic/AssetStudio/blob/AssetStudioMod/CHANGELOG.md) for details)
 
 ## Requirements
 
 - AssetStudioMod.net472
    - GUI/CLI - [.NET Framework 4.7.2](https://dotnet.microsoft.com/download/dotnet-framework/net472)
-- AssetStudioMod.net6
-   - GUI/CLI (Windows) - [.NET Desktop Runtime 6.0](https://dotnet.microsoft.com/download/dotnet/6.0)
-   - CLI (Linux/Mac) - [.NET Runtime 6.0](https://dotnet.microsoft.com/download/dotnet/6.0)
 - AssetStudioMod.net8
    - GUI/CLI (Windows) - [.NET Desktop Runtime 8.0](https://dotnet.microsoft.com/download/dotnet/8.0)
    - CLI (Linux/Mac) - [.NET Runtime 8.0](https://dotnet.microsoft.com/download/dotnet/8.0)
+- AssetStudioMod.net9
+   - GUI/CLI (Windows) - [.NET Desktop Runtime 9.0](https://dotnet.microsoft.com/download/dotnet/9.0)
+   - CLI (Linux/Mac) - [.NET Runtime 9.0](https://dotnet.microsoft.com/download/dotnet/9.0)
 
 ## CLI Usage
 
-You can read CLI readme [here](https://github.com/aelurum/AssetStudio/blob/AssetStudioMod/AssetStudioCLI/ReadMe.md).
+You can read CLI README [here](https://github.com/aelurum/AssetStudio/blob/AssetStudioMod/AssetStudioCLI/ReadMe.md).
 
 ### Run
 
 - Command-line: `AssetStudioModCLI <asset folder path>`
-- Command-line for Portable versions (.NET 6+): `dotnet AssetStudioModCLI.dll <asset folder path>`
+- Command-line for Portable versions (.NET 8+): `dotnet AssetStudioModCLI.dll <asset folder path>`
 
 ### Basic Samples
 

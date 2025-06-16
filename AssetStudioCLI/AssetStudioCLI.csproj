@@ -5,7 +5,7 @@
         <TargetFrameworks>net472;net8.0;net9.0</TargetFrameworks>
         <AssemblyTitle>AssetStudioMod by aelurum</AssemblyTitle>
         <AssemblyName>AssetStudioModCLI</AssemblyName>
-        <Version>0.18.0.0</Version>
+        <Version>0.18.2.0</Version>
         <Copyright>Copyright © Perfare; Copyright © aelurum 2023-2024</Copyright>
         <PlatformTarget>AnyCPU</PlatformTarget>
         <DebugType>embedded</DebugType>
@@ -19,10 +19,10 @@
         <ProjectReference Include="..\AssetStudioUtility\AssetStudioUtility.csproj" />
         <ProjectReference Include="..\AssetStudio\AssetStudio.csproj" />
     </ItemGroup>
-    
+
     <!-- Use local compiled win-x86 and win-x64 Texture2DDecoder libs, because libs from Kyaru.Texture2DDecoder.Windows were compiled with /MD flag -->
 
-    <Target Name="CopyExtraFilesPortable" AfterTargets="AfterBuild" Condition=" '$(RuntimeIdentifier)' == '' ">
+    <Target Name="CopyExtraFilesPortable" AfterTargets="AfterBuild" Condition=" '$(RuntimeIdentifier)' == '' AND $([MSBuild]::IsOSPlatform('Windows')) ">
         <Message Text="Copying windows extra files for $(TargetFramework)... " Importance="high" />
         <Copy SourceFiles="$(SolutionDir)AssetStudioFBXNative\bin\Win32\$(Configuration)\AssetStudioFBXNative.dll" DestinationFolder="$(TargetDir)runtimes\win-x86\native" ContinueOnError="false" />
         <Copy SourceFiles="$(SolutionDir)AssetStudioFBXNative\bin\x64\$(Configuration)\AssetStudioFBXNative.dll" DestinationFolder="$(TargetDir)runtimes\win-x64\native" ContinueOnError="false" />
@@ -58,7 +58,7 @@
 
     <!-- Publishing an app as framework-dependent produces a cross-platform binary as a dll file, and a platform-specific executable that targets your current platform.
     The dll is cross-platform while the executable isn't -->
-    <Target Name="PublishExtraFilesPortable" AfterTargets="Publish" Condition=" '$(RuntimeIdentifier)' == '' ">
+    <Target Name="PublishExtraFilesPortable" AfterTargets="Publish" Condition=" '$(RuntimeIdentifier)' == '' AND $([MSBuild]::IsOSPlatform('Windows')) ">
         <Message Text="Publishing windows extra files for Portable build ($(TargetFramework))... " Importance="high" />
         <Copy SourceFiles="$(TargetDir)runtimes\win-x86\native\AssetStudioFBXNative.dll" DestinationFolder="$(PublishDir)runtimes\win-x86\native" ContinueOnError="false" />
         <Copy SourceFiles="$(TargetDir)runtimes\win-x64\native\AssetStudioFBXNative.dll" DestinationFolder="$(PublishDir)runtimes\win-x64\native" ContinueOnError="false" />
