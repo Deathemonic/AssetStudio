@@ -1,0 +1,227 @@
+name: AssetStudioFBXNative
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - AssetStudioFBXNative/**
+      - ".github/workflows/fbx.yml"
+  pull_request:
+    branches: [main]
+
+env:
+  BUILD_TYPE: Release
+  USER_AGENT: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+  PROJECT_NAME: AssetStudioFBXNative
+  FBX_VERSION: "2020.2.1"
+
+defaults:
+  run:
+    working-directory: AssetStudioFBXNative
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+        arch: ["x64"]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Download FBX SDK
+        run: |
+          $fbxsdk = "${{github.workspace}}/fbxsdk"
+          $y, $m, $d = '${{ env.FBX_VERSION }}'.Split('.')
+          $fbxVersionDash = "$y-$m-$d"
+          $fbxVersionJoin = "$y$m$d"
+          $binBase = "fbx${fbxVersionJoin}_fbxsdk"
+
+          $headers = @{
+            "User-Agent" = '${{ env.USER_AGENT }}'
+            "Accept" = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"
+            "Accept-Language" = "en-US,en;q=0.5"
+            "Accept-Encoding" = "gzip, deflate, br"
+            "Referer" = "https://www.autodesk.com/developer-network/platform-technologies/fbx-sdk-$fbxVersionDash"
+            "DNT" = "1"
+          }
+
+          New-Item -ItemType Directory -Force -Path $fbxsdk
+          Push-Location -Path $fbxsdk
+
+                    function Download-WithRetry {
+            param(
+              [string]$uri,
+              [string]$outFile,
+              [int]$maxRetries = 3
+            )
+
+            $attempt = 0
+            $success = $false
+
+            while (-not $success -and $attempt -lt $maxRetries) {
+              try {
+                $attempt++
+                Write-Host "Download attempt $attempt of $maxRetries for $uri"
+
+                # Use curl instead of Invoke-WebRequest for more robust downloading
+                if ($IsWindows) {
+                  curl.exe -L -o $outFile -A '${{ env.USER_AGENT }}' --referer 'https://www.autodesk.com/' $uri
+                } else {
+                  curl -L -o $outFile -A '${{ env.USER_AGENT }}' --referer 'https://www.autodesk.com/' $uri
+                }
+
+                if (Test-Path $outFile) {
+                  $fileSize = (Get-Item $outFile).Length
+                  if ($fileSize -gt 1000000) { # File should be at least 1MB
+                    $success = $true
+                    Write-Host "Download successful. File size: $fileSize bytes."
+                  } else {
+                    Write-Host "Downloaded file too small ($fileSize bytes), likely an error page."
+                    Remove-Item $outFile -Force
+                  }
+                }
+              }
+              catch {
+                Write-Host "Download failed: $_"
+                if (Test-Path $outFile) {
+                  Remove-Item $outFile -Force
+                }
+              }
+
+              if (-not $success -and $attempt -lt $maxRetries) {
+                $delay = [math]::Pow(2, $attempt) * 3
+                Write-Host "Retrying in $delay seconds..."
+                Start-Sleep -Seconds $delay
+              }
+            }
+
+            return $success
+          }
+
+          if ($IsWindows) {
+            $file = "${binBase}_vs2019_win.exe"
+            $uri1 = "https://www.autodesk.com/content/dam/autodesk/www/adn/fbx/$fbxVersionDash/$file"
+            $uri2 = "https://damassets.autodesk.net/content/dam/autodesk/www/adn/fbx/$fbxVersionDash/$file"
+
+            Write-Host "Attempting to download from $uri1"
+            $success = Download-WithRetry -uri $uri1 -outFile $file
+
+            if (-not $success) {
+              Write-Host "Attempting alternate URL: $uri2"
+              $success = Download-WithRetry -uri $uri2 -outFile $file
+            }
+
+            if ($success) {
+              7z x $file
+            } else {
+              Write-Host "Failed to download Windows FBX SDK after multiple attempts"
+              exit 1
+            }
+          }
+          elseif ($IsMacOS) {
+            $file = "${binBase}_clang_mac.pkg.tgz"
+            $uri1 = "https://www.autodesk.com/content/dam/autodesk/www/adn/fbx/$fbxVersionDash/$file"
+            $uri2 = "https://damassets.autodesk.net/content/dam/autodesk/www/adn/fbx/$fbxVersionDash/$file"
+
+            Write-Host "Attempting to download from $uri1"
+            $success = Download-WithRetry -uri $uri1 -outFile $file
+
+            if (-not $success) {
+              Write-Host "Attempting alternate URL: $uri2"
+              $success = Download-WithRetry -uri $uri2 -outFile $file
+            }
+
+            if ($success) {
+              tar -xzf $file
+              pkgutil --expand "${binBase}_clang_macos.pkg" $binBase
+              tar -xzf $binBase/Root.pkg/Payload --strip-components=5
+            } else {
+              Write-Host "Failed to download macOS FBX SDK after multiple attempts"
+              exit 1
+            }
+          }
+          else {
+            $file = "${binBase}_linux.tar.gz"
+            $uri1 = "https://www.autodesk.com/content/dam/autodesk/www/adn/fbx/$fbxVersionDash/$file"
+            $uri2 = "https://damassets.autodesk.net/content/dam/autodesk/www/adn/fbx/$fbxVersionDash/$file"
+
+            Write-Host "Attempting to download from $uri1"
+            $success = Download-WithRetry -uri $uri1 -outFile $file
+
+            if (-not $success) {
+              Write-Host "Attempting alternate URL: $uri2"
+              $success = Download-WithRetry -uri $uri2 -outFile $file
+            }
+
+            if ($success) {
+              tar -xzf $file
+              "yes`nn" | & "./${binBase}_linux" .
+            } else {
+              Write-Host "Failed to download Linux FBX SDK after multiple attempts"
+              exit 1
+            }
+          }
+
+          Remove-Item -Recurse -Force -Path "${binBase}*"
+          Pop-Location
+        working-directory: .
+        shell: pwsh
+
+      - name: Configure CMake
+        run: |
+          $arch = '${{ matrix.arch }}'
+          $buildArgs = @()
+          $buildArgs += '-B', '${{ github.workspace }}/build'
+          $buildArgs += '-D', 'FBX_SDK_ROOT=${{github.workspace}}/fbxsdk'
+          $buildArgs += '-D', 'CMAKE_INSTALL_LIBDIR=${{github.workspace}}/lib/${{ matrix.arch }}'
+          $buildArgs += '-D', 'CMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}'
+
+          if ($IsWindows) {
+            $buildArgs += '-A', $arch
+          }
+          elseif ($IsMacOS) {
+            $buildArgs += '-D', 'CMAKE_OSX_ARCHITECTURES="x86_64"'
+          }
+
+          $buildArgs += '${{ github.workspace }}/${{ env.PROJECT_NAME }}'
+          Write-Host $buildArgs
+          Start-Process cmake -ArgumentList $buildArgs -Wait
+        shell: pwsh
+
+      - name: Build
+        run: cmake --build '${{ github.workspace }}/build' --config ${{env.BUILD_TYPE}}
+
+      - name: Install
+        run: cmake --install '${{ github.workspace }}/build'
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.PROJECT_NAME }}-${{ matrix.os }}-${{ matrix.arch }}-${{ env.BUILD_TYPE }}
+          path: ${{github.workspace}}/lib/
+
+  publish:
+    runs-on: ubuntu-latest
+
+    needs: [build]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Download all workflow run artifacts
+        uses: actions/download-artifact@v4
+
+      - name: Copy dlls to lib
+        run: |
+          mkdir -p lib
+          cp -r ${{github.workspace}}/${{ env.PROJECT_NAME }}-*-*-Release/* ./lib/
+          tree ./lib/
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.PROJECT_NAME }}-Libs
+          path: "./lib/"
