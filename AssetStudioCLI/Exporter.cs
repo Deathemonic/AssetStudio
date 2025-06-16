@@ -58,7 +58,7 @@ namespace AssetStudioCLI
             Logger.Debug($"{item.TypeString} \"{item.Text}\" exported to \"{exportFullPath}\"");
             return true;
         }
-        
+
         public static bool ExportTextAsset(AssetItem item, string exportPath)
         {
             var m_TextAsset = (TextAsset)item.Asset;
@@ -86,7 +86,7 @@ namespace AssetStudioCLI
             Logger.Debug($"{item.TypeString} \"{item.Text}\" exported to \"{exportFullPath}\"");
             return true;
         }
-        
+
         public static bool ExportMonoBehaviour(AssetItem item, string exportPath)
         {
             if (!TryExportFile(exportPath, item, ".json", out var exportFullPath))
@@ -145,6 +145,7 @@ namespace AssetStudioCLI
                 BoneSize = CLIOptions.o_fbxBoneSize.Value,
                 ScaleFactor = CLIOptions.o_fbxScaleFactor.Value,
                 ExportAllUvsAsDiffuseMaps = CLIOptions.f_fbxUvsAsDiffuseMaps.Value,
+                CastToBone = CLIOptions.f_fbxCastToBone.Value,
             };
             ModelExporter.ExportFbx(exportPath, convert, fbxSettings);
         }

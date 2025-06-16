@@ -392,7 +392,7 @@ namespace AssetStudioCLI
             Progress.Reset();
             foreach (var assetsFile in assetsManager.assetsFileList)
             {
-                var fileNode = new BaseNode(assetsFile.fileName);  //RootNode
+                var fileNode = new BaseNode(assetsFile.fileName);
 
                 foreach (var obj in assetsFile.Objects)
                 {
@@ -826,34 +826,49 @@ namespace AssetStudioCLI
             var searchList = CLIOptions.o_filterByName.Value;
             var isFiltered = CLIOptions.filterBy == FilterBy.Name;
 
-            var exportableObjects = new List<GameObjectNode>();
+            var exportableObjects = new List<GameObject>();
             var exportedCount = 0;
             var k = 0;
 
             Logger.Info($"Searching for objects to export..");
             Progress.Reset();
-            var count = gameObjectTree.Sum(x => x.nodes.Count);
+            
             foreach (var node in gameObjectTree)
             {
                 foreach (GameObjectNode j in node.nodes)
                 {
+                    var gameObject = j.gameObject;
+                    
+                    bool shouldExport = !isFiltered;
+                    
                     if (isFiltered)
                     {
-                        if (!searchList.Any(searchText => j.Text.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0))
-                            continue;
+                        if (searchList.Any(searchText => gameObject.m_Name.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0))
+                        {
+                            shouldExport = true;
+                        }
+                        else
+                        {
+                            var allObjects = new List<GameObject>();
+                            CollectNode(j, allObjects);
+                            
+                            if (allObjects.Any(x => searchList.Any(searchText => 
+                                x.m_Name.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)))
+                            {
+                                shouldExport = true;
+                            }
+                        }
                     }
-                    var gameObjects = new List<GameObject>();
-                    CollectNode(j, gameObjects);
-
-                    if (gameObjects.All(x => x.m_SkinnedMeshRenderer == null && x.m_MeshFilter == null))
+                    
+                    if (shouldExport)
                     {
-                        Progress.Report(++k, count);
-                        continue;
+                        exportableObjects.Add(gameObject);
                     }
-                    exportableObjects.Add(j);
+                    
+                    Progress.Report(++k, gameObjectTree.Sum(x => x.nodes.Count));
                 }
             }
-            gameObjectTree.Clear();
+            
             var exportableCount = exportableObjects.Count;
             var log = $"Found {exportableCount} exportable object(s) ";
             if (isFiltered)
@@ -861,17 +876,19 @@ namespace AssetStudioCLI
                 log += $"that contain {$"\"{string.Join("\", \"", CLIOptions.o_filterByName.Value)}\"".Color(Ansi.BrightYellow)} in their Names";
             }
             Logger.Info(log);
+            
             if (exportableCount > 0)
             {
                 Progress.Reset();
                 k = 0;
-
-                foreach (var gameObjectNode in exportableObjects)
+                
+                foreach (var gameObject in exportableObjects)
                 {
-                    var gameObject = gameObjectNode.gameObject;
+                    var gameObjectHierarchy = new List<GameObject>();
+                    CollectGameObjectAndChildren(gameObject, gameObjectHierarchy);
+                    
                     var filename = FixFileName(gameObject.m_Name);
                     var targetPath = $"{savePath}{filename}{Path.DirectorySeparatorChar}";
-                    //重名文件处理
                     for (int i = 1; ; i++)
                     {
                         if (Directory.Exists(targetPath))
@@ -884,7 +901,7 @@ namespace AssetStudioCLI
                         }
                     }
                     Directory.CreateDirectory(targetPath);
-                    //导出FBX
+                    
                     Logger.Info($"Exporting {filename}.fbx");
                     Progress.Report(k, exportableCount);
                     try
@@ -900,6 +917,7 @@ namespace AssetStudioCLI
                     k++;
                 }
             }
+            
             var status = exportedCount > 0
                 ? $"Finished exporting [{exportedCount}/{exportableCount}] object(s) to \"{CLIOptions.o_outputFolder.Value.Color(Ansi.BrightCyan)}\""
                 : "Nothing exported";
@@ -1183,6 +1201,23 @@ namespace AssetStudioCLI
                 $"Finished exporting [{modelCounter}/{totalModelCount}] Live2D model(s) to \"{CLIOptions.o_outputFolder.Value.Color(Ansi.BrightCyan)}\"" :
                 "Nothing exported.";
             Logger.Default.Log(LoggerEvent.Info, status, ignoreLevel: true);
+        }
+
+        private static void CollectGameObjectAndChildren(GameObject gameObject, List<GameObject> gameObjects)
+        {
+            gameObjects.Add(gameObject);
+            
+            if (gameObject.m_Transform != null)
+            {
+                foreach (var m_Child in gameObject.m_Transform.m_Children)
+                {
+                    if (m_Child.TryGet(out var m_ChildTransform) && 
+                        m_ChildTransform.m_GameObject.TryGet(out var m_ChildGameObject))
+                    {
+                        CollectGameObjectAndChildren(m_ChildGameObject, gameObjects);
+                    }
+                }
+            }
         }
     }
 }

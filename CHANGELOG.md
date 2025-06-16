@@ -1,5 +1,21 @@
 # Changelog
 
+## v0.18.2.0 [06-16-2025]
+
+#### New features
+- Added option to set cast to bone a port from the GUI `(All nodes cast to bone)`:
+	- [CLI] `--fbx-cast-to-bone`
+
+#### Fixes
+- [CLI] Fixed SplitObject mode not extracting meshes with children or bones on it
+  - It now uses a `TreeObject` style way to find the mesh
+
+#### Other changes
+- Updated `build.yml` CI builds
+- Added csproj files for AssetStudioFBXNative and Texture2DDecoderNative
+- Updated cmake list for AssetStudioFBXNative and Texture2DDecoderNative
+  - Ported from KiruyaMomochi's [AssetStudio](https://github.com/KiruyaMomochi/AssetStudio)
+
 ## v0.18.0.0 [04-04-2024]
 #### Breaking Changes
 - Structure of the AnimationClip class has been changed a bit to match the structure of its type tree (`m_Clip = animationClip.m_MuscleClip.m_Clip` -> `m_Clip = animationClip.m_MuscleClip.m_Clip.data`)
@@ -70,7 +86,7 @@
 ## v0.17.2.0 [27-08-2023]
 - [GUI] Improved Scene Hierarchy tab
    - Added "Related assets" item to the context menu (https://github.com/aelurum/AssetStudio/issues/7)
-- [GUI] Added app.manifest for net472 build 
+- [GUI] Added app.manifest for net472 build
    - Added long paths support (win10 v1607+)
    - Fixed blurring at high DPI with scaling
 - [CLI] Fixed sprite export in sprite only mode
@@ -110,16 +126,16 @@
 - [GUI] Added "About" window
 - Fixed cutout glitch in some packed sprites (https://github.com/Perfare/AssetStudio/issues/1015)
 - Optimized drawing performance of packed sprites
-- [GUI] Improved asset list filtering 
+- [GUI] Improved asset list filtering
    - Added filter history
    - Added more filtering modes: Include, Exclude, Regex (Name/Container)
 - Added grouping option with full container path (https://github.com/Perfare/AssetStudio/issues/815)
    - [GUI] - "container path full (with name)"
    - [CLI] - "containerFull"
-- Improved "Restore TextAsset extension name" option 
+- Improved "Restore TextAsset extension name" option
    - If checked, AssetStudio will first try to find an extension in an asset's name and only then in its container. If no extension is found, ".txt" will be used
 - [GUI] Fixed audio player position in maximized window
-- [GUI] Improved file and folder loading (drag&drop) 
+- [GUI] Improved file and folder loading (drag&drop)
    - Added support for drag&drop of multiple folders
    - Open/Export dialog can now also use a path taken from drag&drop items
 - [GUI] Added showing of progress bar in the taskbar button

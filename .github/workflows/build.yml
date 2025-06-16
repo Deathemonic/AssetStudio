@@ -2,20 +2,23 @@ name: AssetStudioBuild
 
 on:
   push:
-    branches: [ master ]
+    branches: [AssetStudioMod]
   pull_request:
-    branches: [ master ]
-
+    branches: [AssetStudioMod]
   workflow_dispatch:
 
-jobs:
-  build:
-    runs-on: windows-latest
+env:
+  BUILD_TYPE: Release
+  USER_AGENT: "Mozilla/5.0 (X11; Fedora; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0"
+  FBX_VERSION: "2020.2.1"
 
+jobs:
+  build-windows:
+    runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: microsoft/setup-msbuild@v1.1
-      
+      - uses: actions/checkout@v4
+      - uses: microsoft/setup-msbuild@v2
+
       - name: Download FBX SDK
         run: |
           md fbx
@@ -26,32 +29,224 @@ jobs:
           Start-Process -FilePath "fbxpdb.exe" /S -Wait
           cd ..
 
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            9.0.x
+
       - name: Nuget Restore
         run: nuget restore
-      
-      - name: Build .Net472
-        run: msbuild /p:Configuration=Release /p:TargetFramework=net472 /verbosity:minimal
 
-      - name: Build .Net5
-        run: msbuild /t:AssetStudioGUI:publish /p:Configuration=Release /p:TargetFramework=net5.0-windows /p:SelfContained=false /verbosity:minimal
+      - name: Dotnet Restore
+        run: dotnet restore
 
-      - name: Build .Net6
-        run: msbuild /t:AssetStudioGUI:publish /p:Configuration=Release /p:TargetFramework=net6.0-windows /p:SelfContained=false /verbosity:minimal
+      - name: Build GUI .Net472
+        run: msbuild /t:AssetStudioGUI /p:Configuration=Release /p:TargetFramework=net472 /verbosity:minimal
 
-      - name: Upload .Net472 Artifact
-        uses: actions/upload-artifact@v2
+      - name: Build CLI .Net472
+        run: msbuild /t:AssetStudioCLI /p:Configuration=Release /p:TargetFramework=net472 /verbosity:minimal
+
+      - name: Build GUI .Net8
+        run: msbuild /t:AssetStudioGUI:publish /p:Configuration=Release /p:TargetFramework=net8.0-windows /p:SelfContained=false /verbosity:minimal
+
+      - name: Build CLI .Net8
+        run: msbuild /t:AssetStudioCLI:publish /p:Configuration=Release /p:TargetFramework=net8.0 /p:SelfContained=false /verbosity:minimal
+
+      - name: Build GUI .Net9
+        run: msbuild /t:AssetStudioGUI:publish /p:Configuration=Release /p:TargetFramework=net9.0-windows /p:SelfContained=false /verbosity:minimal
+
+      - name: Build CLI .Net9
+        run: msbuild /t:AssetStudioCLI:publish /p:Configuration=Release /p:TargetFramework=net9.0 /p:SelfContained=false /verbosity:minimal
+
+      - name: Upload GUI .Net472 Artifact
+        uses: actions/upload-artifact@v4
         with:
-          name: AssetStudio.net472
+          name: AssetStudio-GUI-net472-windows
           path: AssetStudioGUI/bin/Release/net472
 
-      - name: Upload .Net5 Artifact
-        uses: actions/upload-artifact@v2
+      - name: Upload CLI .Net472 Artifact
+        uses: actions/upload-artifact@v4
         with:
-          name: AssetStudio.net5
-          path: AssetStudioGUI/bin/Release/net5.0-windows/publish
+          name: AssetStudio-CLI-net472-windows
+          path: AssetStudioCLI/bin/Release/net472
 
-      - name: Upload .Net6 Artifact
-        uses: actions/upload-artifact@v2
+      - name: Upload GUI .Net8 Artifact
+        uses: actions/upload-artifact@v4
         with:
-          name: AssetStudio.net6
-          path: AssetStudioGUI/bin/Release/net6.0-windows/publish
+          name: AssetStudio-GUI-net8-windows
+          path: AssetStudioGUI/bin/Release/net8.0-windows/publish
+
+      - name: Upload CLI .Net8 Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AssetStudio-CLI-net8-windows
+          path: AssetStudioCLI/bin/Release/net8.0/publish
+
+      - name: Upload GUI .Net9 Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AssetStudio-GUI-net9-windows
+          path: AssetStudioGUI/bin/Release/net9.0-windows/publish
+
+      - name: Upload CLI .Net9 Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AssetStudio-CLI-net9-windows
+          path: AssetStudioCLI/bin/Release/net9.0/publish
+
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download FBX SDK
+        run: |
+          fbxsdk="${GITHUB_WORKSPACE}/fbxsdk"
+          y=$(echo '${{ env.FBX_VERSION }}' | cut -d'.' -f1)
+          m=$(echo '${{ env.FBX_VERSION }}' | cut -d'.' -f2)
+          d=$(echo '${{ env.FBX_VERSION }}' | cut -d'.' -f3)
+          fbxVersionJoin="${y}${m}${d}"
+          binBase="fbx${fbxVersionJoin}_fbxsdk"
+          urlBase="https://www.autodesk.com/content/dam/autodesk/www/adn/fbx/${y}-${m}-${d}"
+          mkdir -p "$fbxsdk"
+          cd "$fbxsdk"
+          file="${binBase}_linux.tar.gz"
+          uri="${urlBase}/${file}"
+          echo "Downloading from $uri"
+          wget --user-agent '${{ env.USER_AGENT }}' "$uri"
+          tar -xzf "$file"
+          echo -e "yes\nyes" | "./${binBase}_linux" .
+          rm -rf "${binBase}"*
+        shell: bash
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y build-essential cmake zlib1g-dev libsnappy-dev liblz4-dev libxml2-dev
+
+      - name: Build Native Library
+        run: |
+          if [ -d "AssetStudioFBXNative" ]; then
+            cd AssetStudioFBXNative
+            mkdir -p build
+            cmake -B build \
+              -DFBX_SDK_ROOT="${GITHUB_WORKSPACE}/fbxsdk" \
+              -DCMAKE_INSTALL_LIBDIR="${GITHUB_WORKSPACE}/lib/x64" \
+              -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} \
+              .
+            cmake --build build --config ${{ env.BUILD_TYPE }}
+            cmake --install build
+            cd ..
+          fi
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            9.0.x
+
+      - name: Dotnet Restore
+        run: dotnet restore
+
+      - name: Build CLI .Net8
+        run: dotnet publish AssetStudioCLI -c Release -f net8.0 --self-contained false
+
+      - name: Build CLI .Net9
+        run: dotnet publish AssetStudioCLI -c Release -f net9.0 --self-contained false
+
+      - name: Upload CLI .Net8 Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AssetStudio-CLI-net8-linux
+          path: AssetStudioCLI/bin/Release/net8.0/publish
+
+      - name: Upload CLI .Net9 Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AssetStudio-CLI-net9-linux
+          path: AssetStudioCLI/bin/Release/net9.0/publish
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download FBX SDK
+        run: |
+          set -ex
+          fbxsdk="${GITHUB_WORKSPACE}/fbxsdk"
+          y=$(echo '${{ env.FBX_VERSION }}' | cut -d'.' -f1)
+          m=$(echo '${{ env.FBX_VERSION }}' | cut -d'.' -f2)
+          d=$(echo '${{ env.FBX_VERSION }}' | cut -d'.' -f3)
+          fbxVersionJoin="${y}${m}${d}"
+          binBase="fbx${fbxVersionJoin}_fbxsdk"
+
+          mkdir -p "$fbxsdk"
+          cd "$fbxsdk"
+
+          file="${binBase}_clang_mac.pkg.tgz"
+          uri="https://damassets.autodesk.net/content/dam/autodesk/www/adn/fbx/${y}-${m}-${d}/${file}"
+          echo "Downloading from $uri"
+          curl -A '${{ env.USER_AGENT }}' -L "$uri" -o "$file"
+
+          tar -xzf "$file"
+
+          # Clean up any existing extraction directory to avoid "File exists" error
+          rm -rf "$binBase"
+
+          pkgutil --expand "${binBase}_clang_macos.pkg" "$binBase"
+          tar -xzf "$binBase/Root.pkg/Payload" --strip-components=5
+
+          rm -rf "${binBase}"* "$file"
+        shell: bash
+
+      - name: Install dependencies
+        run: |
+          brew install cmake
+
+      - name: Build Native Library
+        run: |
+          if [ -d "AssetStudioFBXNative" ]; then
+            cd AssetStudioFBXNative
+            mkdir -p build
+            cmake -B build \
+              -DFBX_SDK_ROOT="${GITHUB_WORKSPACE}/fbxsdk" \
+              -DCMAKE_INSTALL_LIBDIR="${GITHUB_WORKSPACE}/lib/x64" \
+              -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} \
+              -DCMAKE_OSX_ARCHITECTURES="x86_64" \
+              .
+            cmake --build build --config ${{ env.BUILD_TYPE }}
+            cmake --install build
+            cd ..
+          fi
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            9.0.x
+
+      - name: Dotnet Restore
+        run: dotnet restore
+
+      - name: Build CLI .Net8
+        run: dotnet publish AssetStudioCLI -c Release -f net8.0 --self-contained false
+
+      - name: Build CLI .Net9
+        run: dotnet publish AssetStudioCLI -c Release -f net9.0 --self-contained false
+
+      - name: Upload CLI .Net8 Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AssetStudio-CLI-net8-mac
+          path: AssetStudioCLI/bin/Release/net8.0/publish
+
+      - name: Upload CLI .Net9 Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AssetStudio-CLI-net9-mac
+          path: AssetStudioCLI/bin/Release/net9.0/publish
