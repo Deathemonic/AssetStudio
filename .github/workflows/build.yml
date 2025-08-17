@@ -45,9 +45,6 @@ jobs:
       - name: Build GUI .Net472
         run: msbuild /t:AssetStudioGUI /p:Configuration=Release /p:TargetFramework=net472 /verbosity:minimal
 
-      - name: Build CLI .Net472
-        run: msbuild /t:AssetStudioCLI /p:Configuration=Release /p:TargetFramework=net472 /verbosity:minimal
-
       - name: Build GUI .Net8
         run: msbuild /t:AssetStudioGUI:publish /p:Configuration=Release /p:TargetFramework=net8.0-windows /p:SelfContained=false /verbosity:minimal
 
@@ -68,19 +65,7 @@ jobs:
         with:
           name: AssetStudio-GUI-net472-windows
           path: AssetStudioGUI/bin/Release/net472
-
-      - name: Upload CLI .Net472 Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: AssetStudio-CLI-net472-windows
-          path: AssetStudioCLI/bin/Release/net472
-
-      - name: Upload GUI .Net8 Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: AssetStudio-GUI-net8-windows
-          path: AssetStudioGUI/bin/Release/net8.0-windows/publish
-
+          
       - name: Upload GUI .Net8 Artifact
         uses: actions/upload-artifact@v4
         with:
