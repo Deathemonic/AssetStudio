@@ -1061,24 +1061,6 @@ namespace AssetStudioCLI.Options
                             }
                             break;
                         }
-                        case "--fbx-animation":
-                            switch (value.ToLower())
-                            {
-                                case "auto":
-                                    o_fbxAnimMode.Value = AnimationExportMode.Auto;
-                                    break;
-                                case "skip":
-                                    o_fbxAnimMode.Value = AnimationExportMode.Skip;
-                                    break;
-                                case "all":
-                                    o_fbxAnimMode.Value = AnimationExportMode.All;
-                                    break;
-                                default:
-                                    Console.WriteLine($"{"Error".Color(brightRed)} during parsing [{option.Color(brightYellow)}] option. Unsupported animation export mode: [{value.Color(brightRed)}].\n");
-                                    ShowOptionDescription(o_fbxAnimMode);
-                                    return;
-                            }
-                            break;
                         case "--blockinfo-comp":
                             switch (value.ToLower())
                             {
