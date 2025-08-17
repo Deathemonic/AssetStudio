@@ -186,7 +186,7 @@ namespace AssetStudioCLI.Options
                 ClassIDType.MovieTexture,
                 ClassIDType.Mesh,
             };
-            knownAssetTypesDict = ((ClassIDType[])Enum.GetValues(typeof(ClassIDType))).ToHashSet().ToDictionary(x => x.ToString().ToLower(), y => y);
+            knownAssetTypesDict = Enum.GetValues<ClassIDType>().ToHashSet().ToDictionary(x => x.ToString().ToLower(), y => y);
 
             #region Init General Options
             o_workMode = new GroupedOption<WorkMode>
@@ -604,7 +604,7 @@ namespace AssetStudioCLI.Options
                 }
                 else
                 {
-                    resplittedArgs.Add(arg);
+                    processedArgs.Add(arg);
                 }
             }
             ;
@@ -673,7 +673,7 @@ namespace AssetStudioCLI.Options
             #endregion
 
             #region Parse Flags
-            for (var i = 0; i < resplittedArgs.Count; i++)
+            for (var i = 0; i < processedArgs.Count; i++)
             {
                 var flag = processedArgs[i].ToLower();
 
@@ -744,7 +744,7 @@ namespace AssetStudioCLI.Options
                             return;
                         }
                         f_fbxCastToBone.Value = true;
-                        resplittedArgs.RemoveAt(i);
+                        processedArgs.RemoveAt(i);
                         break;
                 }
             }

@@ -849,7 +849,7 @@ namespace AssetStudioCLI
                     
                     if (isFiltered)
                     {
-                        if (searchList.Any(searchText => gameObject.m_Name.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0))
+                        if (filterList.Any(searchText => gameObject.m_Name.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0))
                         {
                             shouldExport = true;
                         }
@@ -858,7 +858,7 @@ namespace AssetStudioCLI
                             var allObjects = new List<GameObject>();
                             CollectNode(j, allObjects);
                             
-                            if (allObjects.Any(x => searchList.Any(searchText => 
+                            if (allObjects.Any(x => filterList.Any(searchText => 
                                 x.m_Name.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)))
                             {
                                 shouldExport = true;

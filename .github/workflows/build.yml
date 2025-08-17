@@ -57,8 +57,11 @@ jobs:
       - name: Build GUI .Net9
         run: msbuild /t:AssetStudioGUI:publish /p:Configuration=Release /p:TargetFramework=net9.0-windows /p:SelfContained=false /verbosity:minimal
 
+      - name: Build CLI .Net8
+        run: dotnet publish AssetStudioCLI -c Release -f net8.0 -r win-x64 --self-contained
+
       - name: Build CLI .Net9
-        run: msbuild /t:AssetStudioCLI:publish /p:Configuration=Release /p:TargetFramework=net9.0 /p:SelfContained=false /verbosity:minimal
+        run: dotnet publish AssetStudioCLI -c Release -f net9.0 -r win-x64 --self-contained
 
       - name: Upload GUI .Net472 Artifact
         uses: actions/upload-artifact@v4
@@ -78,11 +81,17 @@ jobs:
           name: AssetStudio-GUI-net8-windows
           path: AssetStudioGUI/bin/Release/net8.0-windows/publish
 
+      - name: Upload GUI .Net8 Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AssetStudio-GUI-net8-windows
+          path: AssetStudioGUI/bin/Release/net8.0-windows/publish
+
       - name: Upload CLI .Net8 Artifact
         uses: actions/upload-artifact@v4
         with:
           name: AssetStudio-CLI-net8-windows
-          path: AssetStudioCLI/bin/Release/net8.0/publish
+          path: AssetStudioCLI/bin/Release/net8.0/win-x64/publish
 
       - name: Upload GUI .Net9 Artifact
         uses: actions/upload-artifact@v4
@@ -94,7 +103,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: AssetStudio-CLI-net9-windows
-          path: AssetStudioCLI/bin/Release/net9.0/publish
+          path: AssetStudioCLI/bin/Release/net9.0/win-x64/publish
 
   build-linux:
     runs-on: ubuntu-latest
@@ -109,7 +118,7 @@ jobs:
           d=$(echo '${{ env.FBX_VERSION }}' | cut -d'.' -f3)
           fbxVersionJoin="${y}${m}${d}"
           binBase="fbx${fbxVersionJoin}_fbxsdk"
-          urlBase="https://www.autodesk.com/content/dam/autodesk/www/adn/fbx/${y}-${m}-${d}"
+          urlBase="https://damassets.autodesk.net/content/dam/autodesk/www/adn/fbx/${y}-${m}-${d}"
           mkdir -p "$fbxsdk"
           cd "$fbxsdk"
           file="${binBase}_linux.tar.gz"
@@ -152,25 +161,25 @@ jobs:
         run: dotnet restore
 
       - name: Build CLI .Net8
-        run: dotnet publish AssetStudioCLI -c Release -f net8.0 --self-contained false
+        run: dotnet publish AssetStudioCLI -c Release -f net8.0 -r linux-x64 --self-contained
 
       - name: Build CLI .Net9
-        run: dotnet publish AssetStudioCLI -c Release -f net9.0 --self-contained false
+        run: dotnet publish AssetStudioCLI -c Release -f net9.0 -r linux-x64 --self-contained
 
       - name: Upload CLI .Net8 Artifact
         uses: actions/upload-artifact@v4
         with:
           name: AssetStudio-CLI-net8-linux
-          path: AssetStudioCLI/bin/Release/net8.0/publish
+          path: AssetStudioCLI/bin/Release/net8.0/linux-x64/publish
 
       - name: Upload CLI .Net9 Artifact
         uses: actions/upload-artifact@v4
         with:
           name: AssetStudio-CLI-net9-linux
-          path: AssetStudioCLI/bin/Release/net9.0/publish
+          path: AssetStudioCLI/bin/Release/net9.0/linux-x64/publish
 
   build-macos:
-    runs-on: macos-latest
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
 
@@ -233,20 +242,38 @@ jobs:
       - name: Dotnet Restore
         run: dotnet restore
 
-      - name: Build CLI .Net8
-        run: dotnet publish AssetStudioCLI -c Release -f net8.0 --self-contained false
+      - name: Build CLI .Net8 x64
+        run: dotnet publish AssetStudioCLI -c Release -f net8.0 -r osx-x64 --self-contained
 
-      - name: Build CLI .Net9
-        run: dotnet publish AssetStudioCLI -c Release -f net9.0 --self-contained false
+      - name: Build CLI .Net8 ARM64
+        run: dotnet publish AssetStudioCLI -c Release -f net8.0 -r osx-arm64 --self-contained
 
-      - name: Upload CLI .Net8 Artifact
+      - name: Build CLI .Net9 x64
+        run: dotnet publish AssetStudioCLI -c Release -f net9.0 -r osx-x64 --self-contained
+
+      - name: Build CLI .Net9 ARM64
+        run: dotnet publish AssetStudioCLI -c Release -f net9.0 -r osx-arm64 --self-contained
+
+      - name: Upload CLI .Net8 x64 Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: AssetStudio-CLI-net8-mac
-          path: AssetStudioCLI/bin/Release/net8.0/publish
+          name: AssetStudio-CLI-net8-osx-x64
+          path: AssetStudioCLI/bin/Release/net8.0/osx-x64/publish
 
-      - name: Upload CLI .Net9 Artifact
+      - name: Upload CLI .Net8 ARM64 Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: AssetStudio-CLI-net9-mac
-          path: AssetStudioCLI/bin/Release/net9.0/publish
+          name: AssetStudio-CLI-net8-osx-arm64
+          path: AssetStudioCLI/bin/Release/net8.0/osx-arm64/publish
+
+      - name: Upload CLI .Net9 x64 Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AssetStudio-CLI-net9-osx-x64
+          path: AssetStudioCLI/bin/Release/net9.0/osx-x64/publish
+
+      - name: Upload CLI .Net9 ARM64 Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AssetStudio-CLI-net9-osx-arm64
+          path: AssetStudioCLI/bin/Release/net9.0/osx-arm64/publish
