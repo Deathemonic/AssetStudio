@@ -48,9 +48,6 @@ jobs:
       - name: Build GUI .Net8
         run: msbuild /t:AssetStudioGUI:publish /p:Configuration=Release /p:TargetFramework=net8.0-windows /p:SelfContained=false /verbosity:minimal
 
-      - name: Build CLI .Net8
-        run: msbuild /t:AssetStudioCLI:publish /p:Configuration=Release /p:TargetFramework=net8.0 /p:SelfContained=false /verbosity:minimal
-
       - name: Build GUI .Net9
         run: msbuild /t:AssetStudioGUI:publish /p:Configuration=Release /p:TargetFramework=net9.0-windows /p:SelfContained=false /verbosity:minimal
 
