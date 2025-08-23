@@ -1,0 +1,125 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AssetStudio.GUI.ViewModels"
+        xmlns:dock="using:Dock.Avalonia.Controls"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1264" d:DesignHeight="681"
+        x:Class="AssetStudio.GUI.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/logo.ico"
+        Title="AssetStudio"
+        MinWidth="620" MinHeight="400"
+        WindowStartupLocation="CenterScreen">
+
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <DockPanel>
+        <!-- Menu Bar -->
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_File">
+                <MenuItem Header="Load File..." />
+                <MenuItem Header="Load Folder..." />
+                <Separator/>
+                <MenuItem Header="Extract File..." />
+                <MenuItem Header="Extract Folder..." />
+            </MenuItem>
+            <MenuItem Header="_Export">
+                <MenuItem Header="All Assets" />
+                <MenuItem Header="Selected Assets" />
+                <MenuItem Header="Filtered Assets" />
+            </MenuItem>
+            <MenuItem Header="_View">
+                <MenuItem Header="Reset Layout" />
+                <MenuItem Header="Save Layout..." />
+                <MenuItem Header="Load Layout..." />
+            </MenuItem>
+            <MenuItem Header="_Options">
+                <MenuItem Header="Display All Assets" />
+                <MenuItem Header="Enable Preview" />
+                <MenuItem Header="Display Asset Info" />
+                <Separator/>
+                <MenuItem Header="Show Export Options" />
+            </MenuItem>
+            <MenuItem Header="_Debug">
+                <MenuItem Header="Show Console" />
+                <MenuItem Header="Export Class Structures" />
+            </MenuItem>
+            <MenuItem Header="_Help">
+                <MenuItem Header="About" />
+            </MenuItem>
+        </Menu>
+
+        <!-- Status Bar -->
+        <Border DockPanel.Dock="Bottom" 
+                BorderBrush="Gray" 
+                BorderThickness="0,1,0,0"
+                Height="25">
+            <Grid>
+                <TextBlock Text="{Binding StatusText}" 
+                          VerticalAlignment="Center" 
+                          Margin="8,0,0,0" />
+                <ProgressBar Width="200" Height="16" 
+                            Value="{Binding ProgressValue}" 
+                            IsVisible="{Binding IsProgressVisible}"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Margin="0,0,8,0" />
+            </Grid>
+        </Border>
+
+        <!-- Search Bar -->
+        <StackPanel DockPanel.Dock="Top" Margin="8,4">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                
+                <TextBox Name="SearchBox" 
+                         Grid.Column="0"
+                         Watermark="Search..." 
+                         Text="{Binding SearchText}"
+                         Margin="0,0,8,0" />
+                
+                <ComboBox Name="FilterMethodCombo"
+                          Grid.Column="1"
+                          SelectedIndex="{Binding SelectedFilterMethod}"
+                          Width="120"
+                          Margin="0,0,8,0">
+                    <ComboBoxItem Content="Fuzzy" />
+                    <ComboBoxItem Content="Contains" />
+                    <ComboBoxItem Content="Exact" />
+                    <ComboBoxItem Content="Regex" />
+                </ComboBox>
+                
+                <ComboBox Name="IncludeExcludeCombo"
+                          Grid.Column="2"
+                          SelectedIndex="{Binding SelectedIncludeExclude}"
+                          Width="100"
+                          Margin="0,0,8,0">
+                    <ComboBoxItem Content="Include" />
+                    <ComboBoxItem Content="Exclude" />
+                </ComboBox>
+                
+                <ComboBox Name="FilterAssetTypeCombo"
+                          Grid.Column="3"
+                          SelectedIndex="{Binding SelectedAssetTypeFilter}"
+                          Width="150"
+                          ItemsSource="{Binding AvailableAssetTypes}">
+                </ComboBox>
+            </Grid>
+        </StackPanel>
+
+        <!-- Docking Layout -->
+        <dock:DockControl Layout="{Binding DockLayout}" />
+    </DockPanel>
+
+</Window>

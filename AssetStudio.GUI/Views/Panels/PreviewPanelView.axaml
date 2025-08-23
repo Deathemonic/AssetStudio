@@ -1,0 +1,126 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:AssetStudio.GUI.ViewModels.Panels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="AssetStudio.GUI.Views.Panels.PreviewPanelView"
+             x:DataType="vm:PreviewPanelViewModel">
+
+    <Design.DataContext>
+        <vm:PreviewPanelViewModel/>
+    </Design.DataContext>
+
+    <ScrollViewer Name="PreviewScrollViewer" 
+                  HorizontalScrollBarVisibility="Auto"
+                  VerticalScrollBarVisibility="Auto">
+        <Panel Name="PreviewPanel" 
+               Background="DarkGray"
+               MinHeight="400">
+            
+            <!-- Asset Info Label -->
+            <TextBlock Name="AssetInfoLabel" 
+                       Background="Black" 
+                       Foreground="White"
+                       Padding="4"
+                       VerticalAlignment="Top"
+                       HorizontalAlignment="Left"
+                       Text="{Binding AssetInfoText}"
+                       IsVisible="{Binding IsAssetInfoVisible}" />
+
+            <!-- Image Preview -->
+            <Image Name="ImagePreview" 
+                   Stretch="Uniform"
+                   IsVisible="{Binding IsImagePreviewVisible}" />
+
+            <!-- Text Preview -->
+            <TextBox Name="TextPreview" 
+                     AcceptsReturn="True"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap"
+                     FontFamily="Consolas"
+                     Background="White"
+                     Text="{Binding TextPreviewContent}"
+                     IsVisible="{Binding IsTextPreviewVisible}" />
+
+            <!-- Font Preview -->
+            <TextBox Name="FontPreview" 
+                     AcceptsReturn="True"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap"
+                     Background="White"
+                     Text="{Binding FontPreviewContent}"
+                     IsVisible="{Binding IsFontPreviewVisible}" />
+
+            <!-- Audio Controls Panel -->
+            <StackPanel Name="AudioPanel" 
+                        Background="LightGray"
+                        Orientation="Vertical"
+                        Margin="8"
+                        VerticalAlignment="Bottom"
+                        HorizontalAlignment="Stretch"
+                        IsVisible="{Binding IsAudioPanelVisible}">
+                
+                <TextBlock Name="AudioInfoLabel" 
+                           Text="{Binding AudioInfoText}" 
+                           Margin="0,0,0,4" />
+                
+                <StackPanel Orientation="Horizontal" 
+                            HorizontalAlignment="Center"
+                            Margin="0,0,0,4">
+                    <Button Name="PlayButton" Content="▶" Width="40" />
+                    <Button Name="PauseButton" Content="⏸" Width="40" Margin="4,0,0,0" />
+                    <Button Name="StopButton" Content="⏹" Width="40" Margin="4,0,0,0" />
+                    <CheckBox Name="LoopCheckBox" 
+                              Content="Loop" 
+                              VerticalAlignment="Center" 
+                              Margin="8,0,0,0"
+                              IsChecked="{Binding IsLoopEnabled}" />
+                </StackPanel>
+                
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                    <TextBlock Text="Progress:" VerticalAlignment="Center" />
+                    <Slider Name="ProgressSlider" 
+                            Width="200" 
+                            Margin="8,0,0,0"
+                            Value="{Binding ProgressValue}" />
+                    <TextBlock Name="TimeLabel" 
+                               Text="{Binding TimeText}" 
+                               VerticalAlignment="Center" 
+                               Margin="8,0,0,0" />
+                </StackPanel>
+                
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Volume:" VerticalAlignment="Center" />
+                    <Slider Name="VolumeSlider" 
+                            Width="100" 
+                            Minimum="0" 
+                            Maximum="100" 
+                            Value="{Binding VolumeValue}" 
+                            Margin="8,0,0,0" />
+                </StackPanel>
+            </StackPanel>
+
+            <!-- 3D Model Preview Placeholder -->
+            <Border Name="ModelPreview" 
+                    Background="Black"
+                    IsVisible="{Binding IsModelPreviewVisible}">
+                <TextBlock Text="3D Model Preview (Not Implemented)" 
+                           Foreground="White"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
+            </Border>
+
+            <!-- Class Text Preview -->
+            <TextBox Name="ClassTextPreview" 
+                     AcceptsReturn="True"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap"
+                     FontFamily="Consolas"
+                     Background="White"
+                     Text="{Binding ClassTextContent}"
+                     IsVisible="{Binding IsClassTextPreviewVisible}" />
+        </Panel>
+    </ScrollViewer>
+
+</UserControl>

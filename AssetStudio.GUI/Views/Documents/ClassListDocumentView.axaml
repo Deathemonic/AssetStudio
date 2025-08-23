@@ -1,0 +1,43 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:AssetStudio.GUI.ViewModels.Documents"
+             xmlns:models="using:AssetStudio.GUI.Models.Documents"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="600"
+             x:Class="AssetStudio.GUI.Views.Documents.ClassListDocumentView"
+             x:DataType="vm:ClassListDocumentViewModel">
+
+    <Design.DataContext>
+        <vm:ClassListDocumentViewModel/>
+    </Design.DataContext>
+
+    <DockPanel>
+        <!-- Class List -->
+        <DataGrid Name="ClassDataGrid" 
+                  AutoGenerateColumns="False"
+                  CanUserResizeColumns="True"
+                  ItemsSource="{Binding CollectionView}"
+                  IsReadOnly="True"
+                  GridLinesVisibility="All"
+                  BorderThickness="1" 
+                  BorderBrush="Gray"
+                  Margin="4"
+                  ColumnHeaderHeight="25"
+                  HorizontalScrollBarVisibility="Auto"
+                  VerticalScrollBarVisibility="Auto"
+                  x:DataType="vm:ClassListDocumentViewModel">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ID" 
+                                        Binding="{Binding ID}" 
+                                        Width="80"
+                                        x:DataType="models:ClassItem" />
+                    <DataGridTextColumn Header="Class Name" 
+                                        Binding="{Binding ClassName}" 
+                                        Width="*"
+                                        x:DataType="models:ClassItem" />
+                </DataGrid.Columns>
+        </DataGrid>
+    </DockPanel>
+
+</UserControl>

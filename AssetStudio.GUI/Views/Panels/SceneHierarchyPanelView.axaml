@@ -1,0 +1,27 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:AssetStudio.GUI.ViewModels.Panels"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="600"
+             x:Class="AssetStudio.GUI.Views.Panels.SceneHierarchyPanelView"
+             x:DataType="vm:SceneHierarchyPanelViewModel">
+
+    <Design.DataContext>
+        <vm:SceneHierarchyPanelViewModel/>
+    </Design.DataContext>
+
+    <DockPanel>
+        <!-- Tree View -->
+        <TreeView Name="SceneTreeView" 
+                  SelectionMode="Multiple"
+                  ItemsSource="{Binding SceneHierarchy}">
+            <TreeView.ItemTemplate>
+                <TreeDataTemplate ItemsSource="{Binding Children}">
+                    <TextBlock Text="{Binding Name}" />
+                </TreeDataTemplate>
+            </TreeView.ItemTemplate>
+        </TreeView>
+    </DockPanel>
+
+</UserControl>

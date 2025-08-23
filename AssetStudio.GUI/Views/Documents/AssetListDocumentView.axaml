@@ -1,0 +1,55 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:AssetStudio.GUI.ViewModels.Documents"
+             xmlns:models="using:AssetStudio.GUI.Models.Documents"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="600"
+             x:Class="AssetStudio.GUI.Views.Documents.AssetListDocumentView"
+             x:DataType="vm:AssetListDocumentViewModel">
+
+    <Design.DataContext>
+        <vm:AssetListDocumentViewModel/>
+    </Design.DataContext>
+
+    <DockPanel>
+        <!-- Asset List -->
+        <DataGrid Name="AssetDataGrid" 
+                  AutoGenerateColumns="False"
+                  CanUserResizeColumns="True"
+                  ItemsSource="{Binding CollectionView}"
+                  IsReadOnly="True"
+                  GridLinesVisibility="All"
+                  BorderThickness="1" 
+                  BorderBrush="Gray"
+                  Margin="4"
+                  ColumnHeaderHeight="25"
+                  HorizontalScrollBarVisibility="Auto"
+                  VerticalScrollBarVisibility="Auto"
+                  x:DataType="vm:AssetListDocumentViewModel">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Name" 
+                                        Binding="{Binding Name}" 
+                                        Width="150"
+                                        x:DataType="models:AssetItem" />
+                    <DataGridTextColumn Header="Container" 
+                                        Binding="{Binding Container}" 
+                                        Width="200"
+                                        x:DataType="models:AssetItem" />
+                    <DataGridTextColumn Header="Type" 
+                                        Binding="{Binding Type}" 
+                                        Width="120"
+                                        x:DataType="models:AssetItem" />
+                    <DataGridTextColumn Header="PathID" 
+                                        Binding="{Binding PathID}" 
+                                        Width="80"
+                                        x:DataType="models:AssetItem" />
+                    <DataGridTextColumn Header="Size" 
+                                        Binding="{Binding Size}" 
+                                        Width="*"
+                                        x:DataType="models:AssetItem" />
+                </DataGrid.Columns>
+        </DataGrid>
+    </DockPanel>
+
+</UserControl>
