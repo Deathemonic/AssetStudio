@@ -1,9 +1,12 @@
 using System.Collections.ObjectModel;
 using AssetStudio.GUI.Models.Documents;
+using AssetStudio.GUI.Logic;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Dock.Model.Mvvm.Controls;
 using Avalonia.Collections;
 using System.Linq;
+using System;
+using System.Collections.Generic;
 
 namespace AssetStudio.GUI.ViewModels.Documents;
 
@@ -30,6 +33,23 @@ public partial class AssetListDocumentViewModel : Document
         CanClose = false;
         InitializeSampleData();
         CollectionView = new DataGridCollectionView(Assets);
+        
+        PropertyChanged += OnPropertyChanged;
+    }
+    
+    private void OnPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(SearchText))
+        {
+            PerformSearch(SearchText, (SearchMethod)SelectedSearchFilterMode, IncludeExcludeMode.Include);
+        }
+        else if (e.PropertyName == nameof(SelectedSearchFilterMode))
+        {
+            if (!string.IsNullOrWhiteSpace(SearchText))
+            {
+                PerformSearch(SearchText, (SearchMethod)SelectedSearchFilterMode, IncludeExcludeMode.Include);
+            }
+        }
     }
 
     private void InitializeSampleData()
@@ -85,12 +105,29 @@ public partial class AssetListDocumentViewModel : Document
         SearchHistory.Add("enemy");
     }
     
-    public void UpdateAvailableAssetTypes()
+    public bool PerformSearch(string searchText, SearchMethod searchMethod, IncludeExcludeMode includeMode)
     {
-        if (MainWindow != null)
+        if (string.IsNullOrWhiteSpace(searchText))
         {
-            var assetTypes = Assets.Select(a => a.Type).Distinct();
-            MainWindow.UpdateAvailableAssetTypes(assetTypes);
+            ClearSearch();
+            return true;
         }
+        
+        try
+        {
+            var filteredAssets = AssetSearch.FilterAssets(Assets, searchText, searchMethod, includeMode);
+            CollectionView = new DataGridCollectionView(new ObservableCollection<AssetItem>(filteredAssets));
+            
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+    }
+    
+    public void ClearSearch()
+    {
+        CollectionView = new DataGridCollectionView(Assets);
     }
 }

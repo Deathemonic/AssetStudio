@@ -1,8 +1,12 @@
 using System.Collections.ObjectModel;
 using AssetStudio.GUI.Models.Documents;
+using AssetStudio.GUI.Logic;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Dock.Model.Mvvm.Controls;
 using Avalonia.Collections;
+using System.Linq;
+using System;
+using System.Collections.Generic;
 
 namespace AssetStudio.GUI.ViewModels.Documents;
 
@@ -23,6 +27,16 @@ public partial class ClassListDocumentViewModel : Document
         CanClose = false;
         InitializeSampleData();
         CollectionView = new DataGridCollectionView(Classes);
+        
+        PropertyChanged += OnPropertyChanged;
+    }
+    
+    private void OnPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(SearchText))
+        {
+            PerformSearch(SearchText, SearchMethod.Contains, IncludeExcludeMode.Include);
+        }
     }
 
     private void InitializeSampleData()
@@ -215,5 +229,45 @@ public partial class ClassListDocumentViewModel : Document
         Classes.Add(new ClassItem { ID = 257, ClassName = "TargetJoint2D" });
         Classes.Add(new ClassItem { ID = 258, ClassName = "LightProbes" });
         Classes.Add(new ClassItem { ID = 259, ClassName = "LightProbeProxyVolume" });
+    }
+    
+    public string SearchableDisplayName => "Class List";
+    
+    public bool PerformSearch(string searchText, SearchMethod searchMethod, IncludeExcludeMode includeMode)
+    {
+        if (string.IsNullOrWhiteSpace(searchText))
+        {
+            ClearSearch();
+            return true;
+        }
+        
+        try
+        {
+            var filteredClasses = Classes.Where(c => 
+                searchMethod switch
+                {
+                    SearchMethod.Contains => c.ClassName.Contains(searchText, StringComparison.OrdinalIgnoreCase),
+                    SearchMethod.Exact => c.ClassName.Equals(searchText, StringComparison.OrdinalIgnoreCase),
+                    SearchMethod.Fuzzy => c.ClassName.Contains(searchText, StringComparison.OrdinalIgnoreCase), // Simple fuzzy for now
+                    SearchMethod.Regex => System.Text.RegularExpressions.Regex.IsMatch(c.ClassName, searchText, System.Text.RegularExpressions.RegexOptions.IgnoreCase),
+                    _ => c.ClassName.Contains(searchText, StringComparison.OrdinalIgnoreCase)
+                }
+            );
+            
+            var finalResult = includeMode == IncludeExcludeMode.Include ? filteredClasses : Classes.Except(filteredClasses);
+            
+            CollectionView = new DataGridCollectionView(new ObservableCollection<ClassItem>(finalResult));
+            
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+    }
+    
+    public void ClearSearch()
+    {
+        CollectionView = new DataGridCollectionView(Classes);
     }
 }

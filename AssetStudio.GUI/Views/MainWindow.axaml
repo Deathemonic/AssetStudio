@@ -1,6 +1,7 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:AssetStudio.GUI.ViewModels"
+        xmlns:views="using:AssetStudio.GUI.Views"
         xmlns:dock="using:Dock.Avalonia.Controls"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -13,8 +14,6 @@
         WindowStartupLocation="CenterScreen">
 
     <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
@@ -71,52 +70,6 @@
                             Margin="0,0,8,0" />
             </Grid>
         </Border>
-
-        <!-- Search Bar -->
-        <StackPanel DockPanel.Dock="Top" Margin="8,4">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                
-                <TextBox Name="SearchBox" 
-                         Grid.Column="0"
-                         Watermark="Search..." 
-                         Text="{Binding SearchText}"
-                         Margin="0,0,8,0" />
-                
-                <ComboBox Name="FilterMethodCombo"
-                          Grid.Column="1"
-                          SelectedIndex="{Binding SelectedFilterMethod}"
-                          Width="120"
-                          Margin="0,0,8,0">
-                    <ComboBoxItem Content="Fuzzy" />
-                    <ComboBoxItem Content="Contains" />
-                    <ComboBoxItem Content="Exact" />
-                    <ComboBoxItem Content="Regex" />
-                </ComboBox>
-                
-                <ComboBox Name="IncludeExcludeCombo"
-                          Grid.Column="2"
-                          SelectedIndex="{Binding SelectedIncludeExclude}"
-                          Width="100"
-                          Margin="0,0,8,0">
-                    <ComboBoxItem Content="Include" />
-                    <ComboBoxItem Content="Exclude" />
-                </ComboBox>
-                
-                <ComboBox Name="FilterAssetTypeCombo"
-                          Grid.Column="3"
-                          SelectedIndex="{Binding SelectedAssetTypeFilter}"
-                          Width="150"
-                          ItemsSource="{Binding AvailableAssetTypes}">
-                </ComboBox>
-            </Grid>
-        </StackPanel>
 
         <!-- Docking Layout -->
         <dock:DockControl Layout="{Binding DockLayout}" />

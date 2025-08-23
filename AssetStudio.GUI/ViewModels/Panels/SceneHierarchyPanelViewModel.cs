@@ -1,7 +1,11 @@
 using System.Collections.ObjectModel;
 using AssetStudio.GUI.Models.Panels;
+using AssetStudio.GUI.Logic;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Dock.Model.Mvvm.Controls;
+using System.Linq;
+using System;
+using System.Collections.Generic;
 
 namespace AssetStudio.GUI.ViewModels.Panels;
 
@@ -9,9 +13,6 @@ public partial class SceneHierarchyPanelViewModel : Tool
 {
     [ObservableProperty]
     private string _searchText = string.Empty;
-
-    [ObservableProperty]
-    private bool _exactSearch = false;
 
     public ObservableCollection<TreeNodeItem> SceneHierarchy { get; } = new();
 
@@ -21,6 +22,14 @@ public partial class SceneHierarchyPanelViewModel : Tool
         Title = "Scene Hierarchy";
         CanClose = false;
         InitializeSampleData();
+        
+        PropertyChanged += (sender, e) =>
+        {
+            if (e.PropertyName == nameof(SearchText))
+            {
+                PerformSearch();
+            }
+        };
     }
 
     private void InitializeSampleData()
@@ -166,5 +175,36 @@ public partial class SceneHierarchyPanelViewModel : Tool
         sceneRoot.Children.Add(particleSystems);
         
         SceneHierarchy.Add(sceneRoot);
+    }
+    
+    private void PerformSearch()
+    {
+        if (string.IsNullOrWhiteSpace(SearchText))
+        {
+            CollapseAllNodes(SceneHierarchy);
+            return;
+        }
+        
+        try
+        {
+            TreeNodeSearch.ExpandToMatches(SceneHierarchy, SearchText);
+            OnPropertyChanged(nameof(SceneHierarchy));
+        }
+        catch (Exception ex)
+        {
+            return;
+        }
+    }
+    
+    private void CollapseAllNodes(IEnumerable<TreeNodeItem> nodes)
+    {
+        foreach (var node in nodes)
+        {
+            node.IsExpanded = false;
+            if (node.Children?.Any() == true)
+            {
+                CollapseAllNodes(node.Children);
+            }
+        }
     }
 }

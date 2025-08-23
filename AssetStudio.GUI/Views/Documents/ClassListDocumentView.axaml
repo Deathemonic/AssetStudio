@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:AssetStudio.GUI.ViewModels.Documents"
              xmlns:models="using:AssetStudio.GUI.Models.Documents"
+             xmlns:views="using:AssetStudio.GUI.Views"
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="600"
              x:Class="AssetStudio.GUI.Views.Documents.ClassListDocumentView"
              x:DataType="vm:ClassListDocumentViewModel">
@@ -13,6 +14,41 @@
     </Design.DataContext>
 
     <DockPanel>
+        <!-- Class Search Bar -->
+        <StackPanel DockPanel.Dock="Top" Margin="8,4">
+            <!-- Search TextBox -->
+            <TextBox Name="ClassSearchBox" 
+                     Watermark="Search classes..." 
+                     Text="{Binding SearchText}"
+                     Margin="0,0,0,4" />
+            
+            <!-- Filter Controls -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="8" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                
+                <ComboBox Name="FilterMethodCombo"
+                          Grid.Column="0"
+                          SelectedIndex="0"
+                          HorizontalAlignment="Stretch">
+                    <ComboBoxItem Content="Fuzzy" />
+                    <ComboBoxItem Content="Contains" />
+                    <ComboBoxItem Content="Exact" />
+                    <ComboBoxItem Content="Regex" />
+                </ComboBox>
+                
+                <ComboBox Name="IncludeExcludeCombo"
+                          Grid.Column="2"
+                          SelectedIndex="0"
+                          HorizontalAlignment="Stretch">
+                    <ComboBoxItem Content="Include" />
+                    <ComboBoxItem Content="Exclude" />
+                </ComboBox>
+            </Grid>
+        </StackPanel>
         <!-- Class List -->
         <DataGrid Name="ClassDataGrid" 
                   AutoGenerateColumns="False"

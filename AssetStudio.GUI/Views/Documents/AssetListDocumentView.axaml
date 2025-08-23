@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:AssetStudio.GUI.ViewModels.Documents"
              xmlns:models="using:AssetStudio.GUI.Models.Documents"
+             xmlns:views="using:AssetStudio.GUI.Views"
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="600"
              x:Class="AssetStudio.GUI.Views.Documents.AssetListDocumentView"
              x:DataType="vm:AssetListDocumentViewModel">
@@ -13,6 +14,57 @@
     </Design.DataContext>
 
     <DockPanel>
+        <!-- Asset Search Bar -->
+        <StackPanel DockPanel.Dock="Top" Margin="8,4">
+            <!-- Search TextBox -->
+            <TextBox Name="AssetSearchBox" 
+                     Watermark="Search assets..." 
+                     Text="{Binding SearchText}"
+                     Margin="0,0,0,4" />
+            
+            <!-- Filter Controls -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="8" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="8" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                
+                <ComboBox Name="FilterMethodCombo"
+                          Grid.Column="0"
+                          SelectedIndex="{Binding SelectedSearchFilterMode}"
+                          HorizontalAlignment="Stretch">
+                    <ComboBoxItem Content="Fuzzy" />
+                    <ComboBoxItem Content="Contains" />
+                    <ComboBoxItem Content="Exact" />
+                    <ComboBoxItem Content="Regex" />
+                </ComboBox>
+                
+                <ComboBox Name="IncludeExcludeCombo"
+                          Grid.Column="2"
+                          SelectedIndex="0"
+                          HorizontalAlignment="Stretch">
+                    <ComboBoxItem Content="Include" />
+                    <ComboBoxItem Content="Exclude" />
+                </ComboBox>
+                
+                <ComboBox Name="FilterAssetTypeCombo"
+                          Grid.Column="4"
+                          SelectedIndex="0"
+                          HorizontalAlignment="Stretch">
+                    <ComboBoxItem Content="All" />
+                    <ComboBoxItem Content="GameObject" />
+                    <ComboBoxItem Content="Texture2D" />
+                    <ComboBoxItem Content="Material" />
+                    <ComboBoxItem Content="AudioClip" />
+                    <ComboBoxItem Content="Mesh" />
+                    <ComboBoxItem Content="MonoBehaviour" />
+                    <ComboBoxItem Content="AnimationClip" />
+                </ComboBox>
+            </Grid>
+        </StackPanel>
         <!-- Asset List -->
         <DataGrid Name="AssetDataGrid" 
                   AutoGenerateColumns="False"

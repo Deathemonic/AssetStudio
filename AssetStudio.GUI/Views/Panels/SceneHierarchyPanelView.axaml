@@ -12,13 +12,19 @@
     </Design.DataContext>
 
     <DockPanel>
+        <!-- Simple Search Box -->
+        <TextBox Name="HierarchySearchBox" 
+                 DockPanel.Dock="Top"
+                 Watermark="Search hierarchy..." 
+                 Text="{Binding SearchText}"
+                 Margin="4" />
         <!-- Tree View -->
         <TreeView Name="SceneTreeView" 
                   SelectionMode="Multiple"
                   ItemsSource="{Binding SceneHierarchy}">
             <TreeView.ItemTemplate>
                 <TreeDataTemplate ItemsSource="{Binding Children}">
-                    <TextBlock Text="{Binding Name}" />
+                    <TextBlock x:Name="ItemTextBlock" Text="{Binding Name}" />
                 </TreeDataTemplate>
             </TreeView.ItemTemplate>
         </TreeView>

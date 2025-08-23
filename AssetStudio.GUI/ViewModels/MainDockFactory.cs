@@ -34,11 +34,8 @@ internal class MainDockFactory : Factory
         _assetListDocument = new AssetListDocumentViewModel { MainWindow = _mainWindow };
         _classListDocument = new ClassListDocumentViewModel();
         
-        _assetListDocument.UpdateAvailableAssetTypes();
         _previewPanel = new PreviewPanelViewModel();
         _dumpPanel = new DumpPanelViewModel();
-
-
 
         var documentDock = _fileDocumentDock = new DocumentDock
         {
@@ -52,8 +49,6 @@ internal class MainDockFactory : Factory
             IsCollapsable = false,
             Proportion = double.NaN
         };
-
-
 
         var leftToolDock = new ToolDock
         {
