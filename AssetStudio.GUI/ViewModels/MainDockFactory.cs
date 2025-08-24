@@ -1,39 +1,31 @@
+using System;
+using System.Collections.Generic;
+using AssetStudio.GUI.ViewModels.Documents;
+using AssetStudio.GUI.ViewModels.Panels;
 using Dock.Avalonia.Controls;
 using Dock.Model.Controls;
 using Dock.Model.Core;
 using Dock.Model.Mvvm;
 using Dock.Model.Mvvm.Controls;
-using System;
-using System.Collections.Generic;
-using AssetStudio.GUI.ViewModels.Panels;
-using AssetStudio.GUI.ViewModels.Documents;
-using AssetStudio.GUI.Views.Panels;
-using AssetStudio.GUI.Views.Documents;
 
 namespace AssetStudio.GUI.ViewModels;
 
-internal class MainDockFactory : Factory
+internal class MainDockFactory(MainWindowViewModel mainWindow) : Factory
 {
-    private readonly MainWindowViewModel _mainWindow;
-    private IRootDock? _rootDock;
-    private IDocumentDock? _fileDocumentDock;
-    private SceneHierarchyPanelViewModel? _sceneHierarchyPanel;
     private AssetListDocumentViewModel? _assetListDocument;
     private ClassListDocumentViewModel? _classListDocument;
-    private PreviewPanelViewModel? _previewPanel;
     private DumpPanelViewModel? _dumpPanel;
-
-    public MainDockFactory(MainWindowViewModel mainWindow)
-    {
-        _mainWindow = mainWindow;
-    }
+    private IDocumentDock? _fileDocumentDock;
+    private PreviewPanelViewModel? _previewPanel;
+    private IRootDock? _rootDock;
+    private SceneHierarchyPanelViewModel? _sceneHierarchyPanel;
 
     public override IRootDock CreateLayout()
     {
         _sceneHierarchyPanel = new SceneHierarchyPanelViewModel();
-        _assetListDocument = new AssetListDocumentViewModel { MainWindow = _mainWindow };
+        _assetListDocument = new AssetListDocumentViewModel { MainWindow = mainWindow };
         _classListDocument = new ClassListDocumentViewModel();
-        
+
         _previewPanel = new PreviewPanelViewModel();
         _dumpPanel = new DumpPanelViewModel();
 
@@ -106,9 +98,7 @@ internal class MainDockFactory : Factory
 
     public override void InitLayout(IDockable layout)
     {
-        ContextLocator = new Dictionary<string, Func<object?>>
-        {
-        };
+        ContextLocator = new Dictionary<string, Func<object?>>();
 
         DockableLocator = new Dictionary<string, Func<IDockable?>>
         {

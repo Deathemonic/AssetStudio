@@ -101,7 +101,7 @@
                 </StackPanel>
             </StackPanel>
 
-            <!-- 3D Model Preview Placeholder -->
+            <!-- 3D Model Preview -->
             <Border Name="ModelPreview" 
                     Background="Black"
                     IsVisible="{Binding IsModelPreviewVisible}">

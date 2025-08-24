@@ -4,24 +4,23 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:AssetStudio.GUI.ViewModels.Documents"
              xmlns:models="using:AssetStudio.GUI.Models.Documents"
-             xmlns:views="using:AssetStudio.GUI.Views"
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="600"
              x:Class="AssetStudio.GUI.Views.Documents.ClassListDocumentView"
              x:DataType="vm:ClassListDocumentViewModel">
 
     <Design.DataContext>
-        <vm:ClassListDocumentViewModel/>
+        <vm:ClassListDocumentViewModel />
     </Design.DataContext>
 
     <DockPanel>
-        <!-- Class Search Bar -->
+        <!-- Search  -->
         <StackPanel DockPanel.Dock="Top" Margin="8,4">
             <!-- Search TextBox -->
-            <TextBox Name="ClassSearchBox" 
-                     Watermark="Search classes..." 
+            <TextBox Name="ClassSearchBox"
+                     Watermark="Search classes..."
                      Text="{Binding SearchText}"
                      Margin="0,0,0,4" />
-            
+
             <!-- Filter Controls -->
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -29,7 +28,7 @@
                     <ColumnDefinition Width="8" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                
+
                 <ComboBox Name="FilterMethodCombo"
                           Grid.Column="0"
                           SelectedIndex="0"
@@ -39,7 +38,7 @@
                     <ComboBoxItem Content="Exact" />
                     <ComboBoxItem Content="Regex" />
                 </ComboBox>
-                
+
                 <ComboBox Name="IncludeExcludeCombo"
                           Grid.Column="2"
                           SelectedIndex="0"
@@ -49,30 +48,31 @@
                 </ComboBox>
             </Grid>
         </StackPanel>
+
         <!-- Class List -->
-        <DataGrid Name="ClassDataGrid" 
+        <DataGrid Name="ClassDataGrid"
                   AutoGenerateColumns="False"
                   CanUserResizeColumns="True"
                   ItemsSource="{Binding CollectionView}"
                   IsReadOnly="True"
                   GridLinesVisibility="All"
-                  BorderThickness="1" 
+                  BorderThickness="1"
                   BorderBrush="Gray"
                   Margin="4"
                   ColumnHeaderHeight="25"
                   HorizontalScrollBarVisibility="Auto"
                   VerticalScrollBarVisibility="Auto"
                   x:DataType="vm:ClassListDocumentViewModel">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="ID" 
-                                        Binding="{Binding ID}" 
-                                        Width="80"
-                                        x:DataType="models:ClassItem" />
-                    <DataGridTextColumn Header="Class Name" 
-                                        Binding="{Binding ClassName}" 
-                                        Width="*"
-                                        x:DataType="models:ClassItem" />
-                </DataGrid.Columns>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID"
+                                    Binding="{Binding Id}"
+                                    Width="80"
+                                    x:DataType="models:ClassItem" />
+                <DataGridTextColumn Header="Class Name"
+                                    Binding="{Binding ClassName}"
+                                    Width="*"
+                                    x:DataType="models:ClassItem" />
+            </DataGrid.Columns>
         </DataGrid>
     </DockPanel>
 

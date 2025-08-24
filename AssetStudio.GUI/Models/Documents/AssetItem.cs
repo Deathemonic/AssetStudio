@@ -7,7 +7,7 @@ public class AssetItem : INotifyPropertyChanged
     private string _name = string.Empty;
     private string _container = string.Empty;
     private string _type = string.Empty;
-    private long _pathID;
+    private long _pathId;
     private long _size;
 
     public string Name
@@ -40,13 +40,13 @@ public class AssetItem : INotifyPropertyChanged
         }
     }
 
-    public long PathID
+    public long PathId
     {
-        get => _pathID;
+        get => _pathId;
         set
         {
-            _pathID = value;
-            OnPropertyChanged(nameof(PathID));
+            _pathId = value;
+            OnPropertyChanged(nameof(PathId));
         }
     }
 

@@ -1,7 +1,6 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:AssetStudio.GUI.ViewModels"
-        xmlns:views="using:AssetStudio.GUI.Views"
         xmlns:dock="using:Dock.Avalonia.Controls"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -14,7 +13,7 @@
         WindowStartupLocation="CenterScreen">
 
     <Design.DataContext>
-        <vm:MainWindowViewModel/>
+        <vm:MainWindowViewModel />
     </Design.DataContext>
 
     <DockPanel>
@@ -23,7 +22,7 @@
             <MenuItem Header="_File">
                 <MenuItem Header="Load File..." />
                 <MenuItem Header="Load Folder..." />
-                <Separator/>
+                <Separator />
                 <MenuItem Header="Extract File..." />
                 <MenuItem Header="Extract Folder..." />
             </MenuItem>
@@ -41,7 +40,7 @@
                 <MenuItem Header="Display All Assets" />
                 <MenuItem Header="Enable Preview" />
                 <MenuItem Header="Display Asset Info" />
-                <Separator/>
+                <Separator />
                 <MenuItem Header="Show Export Options" />
             </MenuItem>
             <MenuItem Header="_Debug">
@@ -54,20 +53,20 @@
         </Menu>
 
         <!-- Status Bar -->
-        <Border DockPanel.Dock="Bottom" 
-                BorderBrush="Gray" 
+        <Border DockPanel.Dock="Bottom"
+                BorderBrush="Gray"
                 BorderThickness="0,1,0,0"
                 Height="25">
             <Grid>
-                <TextBlock Text="{Binding StatusText}" 
-                          VerticalAlignment="Center" 
-                          Margin="8,0,0,0" />
-                <ProgressBar Width="200" Height="16" 
-                            Value="{Binding ProgressValue}" 
-                            IsVisible="{Binding IsProgressVisible}"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
-                            Margin="0,0,8,0" />
+                <TextBlock Text="{Binding StatusText}"
+                           VerticalAlignment="Center"
+                           Margin="8,0,0,0" />
+                <ProgressBar Width="200" Height="16"
+                             Value="{Binding ProgressValue}"
+                             IsVisible="{Binding IsProgressVisible}"
+                             HorizontalAlignment="Right"
+                             VerticalAlignment="Center"
+                             Margin="0,0,8,0" />
             </Grid>
         </Border>
 

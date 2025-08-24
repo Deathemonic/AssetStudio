@@ -5,8 +5,8 @@ namespace AssetStudio.GUI.ViewModels.Panels;
 
 public partial class DumpPanelViewModel : Tool
 {
-    [ObservableProperty]
-    private string _dumpText = "No asset selected for dumping.\n\nSelect an asset from the Asset List to view its raw data structure here.";
+    [ObservableProperty] private string _dumpText =
+        "No asset selected for dumping.\n\nSelect an asset from the Asset List to view its raw data structure here.";
 
     public DumpPanelViewModel()
     {

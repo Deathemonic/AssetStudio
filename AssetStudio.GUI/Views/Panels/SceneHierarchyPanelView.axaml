@@ -12,12 +12,14 @@
     </Design.DataContext>
 
     <DockPanel>
-        <!-- Simple Search Box -->
+        
+        <!-- Search -->
         <TextBox Name="HierarchySearchBox" 
                  DockPanel.Dock="Top"
                  Watermark="Search hierarchy..." 
                  Text="{Binding SearchText}"
                  Margin="4" />
+
         <!-- Tree View -->
         <TreeView Name="SceneTreeView" 
                   SelectionMode="Multiple"

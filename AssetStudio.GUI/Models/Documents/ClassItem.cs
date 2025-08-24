@@ -7,13 +7,13 @@ public class ClassItem : INotifyPropertyChanged
     private int _id;
     private string _className = string.Empty;
 
-    public int ID
+    public int Id
     {
         get => _id;
         set
         {
             _id = value;
-            OnPropertyChanged(nameof(ID));
+            OnPropertyChanged(nameof(Id));
         }
     }
 

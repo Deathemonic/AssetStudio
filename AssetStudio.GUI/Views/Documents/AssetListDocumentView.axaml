@@ -4,24 +4,22 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:AssetStudio.GUI.ViewModels.Documents"
              xmlns:models="using:AssetStudio.GUI.Models.Documents"
-             xmlns:views="using:AssetStudio.GUI.Views"
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="600"
              x:Class="AssetStudio.GUI.Views.Documents.AssetListDocumentView"
              x:DataType="vm:AssetListDocumentViewModel">
 
     <Design.DataContext>
-        <vm:AssetListDocumentViewModel/>
+        <vm:AssetListDocumentViewModel />
     </Design.DataContext>
 
     <DockPanel>
-        <!-- Asset Search Bar -->
+        <!-- Search -->
         <StackPanel DockPanel.Dock="Top" Margin="8,4">
-            <!-- Search TextBox -->
-            <TextBox Name="AssetSearchBox" 
-                     Watermark="Search assets..." 
+            <TextBox Name="AssetSearchBox"
+                     Watermark="Search assets..."
                      Text="{Binding SearchText}"
                      Margin="0,0,0,4" />
-            
+
             <!-- Filter Controls -->
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -31,7 +29,7 @@
                     <ColumnDefinition Width="8" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                
+
                 <ComboBox Name="FilterMethodCombo"
                           Grid.Column="0"
                           SelectedIndex="{Binding SelectedSearchFilterMode}"
@@ -41,7 +39,7 @@
                     <ComboBoxItem Content="Exact" />
                     <ComboBoxItem Content="Regex" />
                 </ComboBox>
-                
+
                 <ComboBox Name="IncludeExcludeCombo"
                           Grid.Column="2"
                           SelectedIndex="0"
@@ -49,7 +47,7 @@
                     <ComboBoxItem Content="Include" />
                     <ComboBoxItem Content="Exclude" />
                 </ComboBox>
-                
+
                 <ComboBox Name="FilterAssetTypeCombo"
                           Grid.Column="4"
                           SelectedIndex="0"
@@ -65,42 +63,43 @@
                 </ComboBox>
             </Grid>
         </StackPanel>
+
         <!-- Asset List -->
-        <DataGrid Name="AssetDataGrid" 
+        <DataGrid Name="AssetDataGrid"
                   AutoGenerateColumns="False"
                   CanUserResizeColumns="True"
                   ItemsSource="{Binding CollectionView}"
                   IsReadOnly="True"
                   GridLinesVisibility="All"
-                  BorderThickness="1" 
+                  BorderThickness="1"
                   BorderBrush="Gray"
                   Margin="4"
                   ColumnHeaderHeight="25"
                   HorizontalScrollBarVisibility="Auto"
                   VerticalScrollBarVisibility="Auto"
                   x:DataType="vm:AssetListDocumentViewModel">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Name" 
-                                        Binding="{Binding Name}" 
-                                        Width="150"
-                                        x:DataType="models:AssetItem" />
-                    <DataGridTextColumn Header="Container" 
-                                        Binding="{Binding Container}" 
-                                        Width="200"
-                                        x:DataType="models:AssetItem" />
-                    <DataGridTextColumn Header="Type" 
-                                        Binding="{Binding Type}" 
-                                        Width="120"
-                                        x:DataType="models:AssetItem" />
-                    <DataGridTextColumn Header="PathID" 
-                                        Binding="{Binding PathID}" 
-                                        Width="80"
-                                        x:DataType="models:AssetItem" />
-                    <DataGridTextColumn Header="Size" 
-                                        Binding="{Binding Size}" 
-                                        Width="*"
-                                        x:DataType="models:AssetItem" />
-                </DataGrid.Columns>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name"
+                                    Binding="{Binding Name}"
+                                    Width="150"
+                                    x:DataType="models:AssetItem" />
+                <DataGridTextColumn Header="Container"
+                                    Binding="{Binding Container}"
+                                    Width="200"
+                                    x:DataType="models:AssetItem" />
+                <DataGridTextColumn Header="Type"
+                                    Binding="{Binding Type}"
+                                    Width="120"
+                                    x:DataType="models:AssetItem" />
+                <DataGridTextColumn Header="PathID"
+                                    Binding="{Binding PathId}"
+                                    Width="80"
+                                    x:DataType="models:AssetItem" />
+                <DataGridTextColumn Header="Size"
+                                    Binding="{Binding Size}"
+                                    Width="*"
+                                    x:DataType="models:AssetItem" />
+            </DataGrid.Columns>
         </DataGrid>
     </DockPanel>
 

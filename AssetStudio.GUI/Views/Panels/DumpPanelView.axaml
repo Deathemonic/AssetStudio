@@ -12,7 +12,6 @@
     </Design.DataContext>
 
     <DockPanel>
-        <!-- Dump content -->
         <TextBox Name="DumpTextBox" 
                  AcceptsReturn="True"
                  IsReadOnly="True"
