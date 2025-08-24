@@ -185,14 +185,13 @@ When you select an asset of the MonoBehaviour type for the first time, AssetStud
 
 First, use [Il2CppDumper](https://github.com/Perfare/Il2CppDumper) to generate dummy dll, then when using AssetStudio to select the assembly directory, select the dummy dll folder.
 
-## Build
+### Build
 
 * Visual Studio 2022 or newer
 * **AssetStudioFBXNative** uses [FBX SDK 2020.2.1](https://www.autodesk.com/developer-network/platform-technologies/fbx-sdk-2020-2-1), before building, you need to install the FBX SDK and modify the project file, change include directory and library directory to point to the FBX SDK directory
 
-## Open source libraries used
-
-### Texture2DDecoder
-* [Ishotihadus/mikunyan](https://github.com/Ishotihadus/mikunyan)
-* [BinomialLLC/crunch](https://github.com/BinomialLLC/crunch)
-* [Unity-Technologies/crunch](https://github.com/Unity-Technologies/crunch/tree/unity)
+### Acknowledgements
+- [Ishotihadus/mikunyan](https://github.com/Ishotihadus/mikunyan) - Texture2D
+- [BinomialLLC/crunch](https://github.com/BinomialLLC/crunch) - Texture2D
+- [Unity-Technologies/crunch](https://github.com/Unity-Technologies/crunch/tree/unity) - Texture2D
+- [nesrak1/UABEANext](https://github.com/nesrak1/UABEANext) - GUI
