@@ -1,36 +1,9 @@
-using System.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace AssetStudio.GUI.Models.Documents;
 
-public sealed class ClassItem : INotifyPropertyChanged
+public sealed partial class ClassItem : ObservableObject
 {
-    private int _id;
-    private string _className = string.Empty;
-
-    public int Id
-    {
-        get => _id;
-        set
-        {
-            _id = value;
-            OnPropertyChanged(nameof(Id));
-        }
-    }
-
-    public string ClassName
-    {
-        get => _className;
-        set
-        {
-            _className = value;
-            OnPropertyChanged(nameof(ClassName));
-        }
-    }
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-    private void OnPropertyChanged(string propertyName)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
+    [ObservableProperty] private int _id;
+    [ObservableProperty] private string _className = string.Empty;
 }

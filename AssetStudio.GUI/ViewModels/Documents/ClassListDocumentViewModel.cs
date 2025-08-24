@@ -10,7 +10,7 @@ namespace AssetStudio.GUI.ViewModels.Documents;
 
 public partial class ClassListDocumentViewModel : Document
 {
-    [ObservableProperty] private DataGridCollectionView _collectionView;
+    [ObservableProperty] private DataGridCollectionView? _collectionView;
     [ObservableProperty] private string _searchText = string.Empty;
     [ObservableProperty] private int _selectedIncludeExcludeMode;
     [ObservableProperty] private int _selectedSearchFilterMode;

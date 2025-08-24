@@ -244,10 +244,4 @@ public partial class AssetListDocumentViewModel : Document
             type.PropertyChanged += OnAssetTypeSelectionChanged;
         }
     }
-
-    public void RefreshAssetTypeFilters()
-    {
-        InitializeAssetTypeFilters();
-        RefreshView();
-    }
 }
