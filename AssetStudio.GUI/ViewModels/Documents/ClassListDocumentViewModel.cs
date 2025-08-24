@@ -1,8 +1,5 @@
-using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text.RegularExpressions;
 using AssetStudio.GUI.Logic;
 using AssetStudio.GUI.Models.Documents;
 using Avalonia.Collections;
@@ -14,8 +11,9 @@ namespace AssetStudio.GUI.ViewModels.Documents;
 public partial class ClassListDocumentViewModel : Document
 {
     [ObservableProperty] private DataGridCollectionView _collectionView;
-
     [ObservableProperty] private string _searchText = string.Empty;
+    [ObservableProperty] private int _selectedIncludeExcludeMode;
+    [ObservableProperty] private int _selectedSearchFilterMode;
 
     public ClassListDocumentViewModel()
     {
@@ -23,19 +21,23 @@ public partial class ClassListDocumentViewModel : Document
         Title = "Classes";
         CanClose = false;
         InitializeSampleData();
-        CollectionView = new DataGridCollectionView(Classes);
+        RefreshView();
 
         PropertyChanged += OnPropertyChanged;
     }
 
-    public ObservableCollection<ClassItem> Classes { get; } = new();
-
-    public string SearchableDisplayName => "Class List";
+    private ObservableCollection<ClassItem> Classes { get; } = [];
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(SearchText))
-            PerformSearch(SearchText, SearchMethod.Contains, IncludeExcludeMode.Include);
+        switch (e.PropertyName)
+        {
+            case nameof(SearchText):
+            case nameof(SelectedSearchFilterMode):
+            case nameof(SelectedIncludeExcludeMode):
+                RefreshView();
+                break;
+        }
     }
 
     private void InitializeSampleData()
@@ -230,44 +232,14 @@ public partial class ClassListDocumentViewModel : Document
         Classes.Add(new ClassItem { Id = 259, ClassName = "LightProbeProxyVolume" });
     }
 
-    public bool PerformSearch(string searchText, SearchMethod searchMethod, IncludeExcludeMode includeMode)
+    private void RefreshView()
     {
-        if (string.IsNullOrWhiteSpace(searchText))
-        {
-            ClearSearch();
-            return true;
-        }
+        var filteredClasses = ClassSearch.PerformSearch(
+            Classes,
+            SearchText,
+            (SearchMethod)SelectedSearchFilterMode,
+            (IncludeExcludeMode)SelectedIncludeExcludeMode);
 
-        try
-        {
-            var filteredClasses = Classes.Where(c =>
-                searchMethod switch
-                {
-                    SearchMethod.Contains => c.ClassName.Contains(searchText, StringComparison.OrdinalIgnoreCase),
-                    SearchMethod.Exact => c.ClassName.Equals(searchText, StringComparison.OrdinalIgnoreCase),
-                    SearchMethod.Fuzzy => c.ClassName.Contains(searchText,
-                        StringComparison.OrdinalIgnoreCase), // Simple fuzzy for now
-                    SearchMethod.Regex => Regex.IsMatch(c.ClassName, searchText, RegexOptions.IgnoreCase),
-                    _ => c.ClassName.Contains(searchText, StringComparison.OrdinalIgnoreCase)
-                }
-            );
-
-            var finalResult = includeMode == IncludeExcludeMode.Include
-                ? filteredClasses
-                : Classes.Except(filteredClasses);
-
-            CollectionView = new DataGridCollectionView(new ObservableCollection<ClassItem>(finalResult));
-
-            return true;
-        }
-        catch (Exception)
-        {
-            return false;
-        }
-    }
-
-    public void ClearSearch()
-    {
-        CollectionView = new DataGridCollectionView(Classes);
+        CollectionView = new DataGridCollectionView(new ObservableCollection<ClassItem>(filteredClasses));
     }
 }

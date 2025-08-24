@@ -17,7 +17,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
     public MainWindowViewModel()
     {
-        _dockFactory = new MainDockFactory(this);
+        _dockFactory = new MainDockFactory();
         InitializeDockLayout();
     }
 

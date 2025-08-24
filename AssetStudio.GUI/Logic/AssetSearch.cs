@@ -7,71 +7,43 @@ namespace AssetStudio.GUI.Logic;
 
 public static class AssetSearch
 {
-    public static IEnumerable<AssetItem> FilterAssets(
+    public static IEnumerable<AssetItem> PerformCompleteSearch(
         IEnumerable<AssetItem> assets,
         string searchText,
         SearchMethod searchMethod,
-        IncludeExcludeMode includeMode)
+        IncludeExcludeMode includeMode,
+        IEnumerable<string> selectedAssetTypes)
     {
-        if (string.IsNullOrWhiteSpace(searchText)) return assets;
-
-        var assetItems = assets as AssetItem[] ?? assets.ToArray();
-        var results = assetItems.AsEnumerable();
-
-        switch (searchMethod)
+        var performCompleteSearch = assets as AssetItem[] ?? assets.ToArray();
+        
+        try
         {
-            case SearchMethod.Exact:
-                results = results.Where(asset =>
-                    string.Equals(asset.Name, searchText, StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(asset.Type, searchText, StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(asset.Container, searchText, StringComparison.OrdinalIgnoreCase));
-                break;
+            var assetItems = assets as AssetItem[] ?? performCompleteSearch.ToArray();
+            var selectedTypes = selectedAssetTypes.ToList();
 
-            case SearchMethod.Contains:
-                results = results.Where(asset =>
-                    asset.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
-                    asset.Type.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
-                    asset.Container.Contains(searchText, StringComparison.OrdinalIgnoreCase));
-                break;
+            var typeFilteredAssets = assetItems.AsEnumerable();
+            if (selectedTypes.Any() && !selectedTypes.Contains("All"))
+                typeFilteredAssets = typeFilteredAssets.Where(asset => selectedTypes.Contains(asset.Type));
 
-            case SearchMethod.Fuzzy:
-            case SearchMethod.Regex:
-                // Not implemented yet, fall back to contains
-                results = results.Where(asset =>
-                    asset.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
-                    asset.Type.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
-                    asset.Container.Contains(searchText, StringComparison.OrdinalIgnoreCase));
-                break;
+            if (string.IsNullOrWhiteSpace(searchText)) return typeFilteredAssets;
+
+            return SearchUtility.PerformTextSearch(
+                typeFilteredAssets,
+                searchText,
+                searchMethod,
+                includeMode,
+                DoesAssetMatchText);
         }
-
-        if (includeMode == IncludeExcludeMode.Exclude) results = assetItems.Except(results);
-
-        return results;
+        catch (Exception)
+        {
+            return performCompleteSearch;
+        }
     }
 
-    public static bool DoesAssetMatch(AssetItem asset, string searchText, SearchMethod searchMethod)
+    private static bool DoesAssetMatchText(AssetItem asset, string searchText, SearchMethod searchMethod)
     {
-        if (string.IsNullOrWhiteSpace(searchText)) return true;
-
-        return searchMethod switch
-        {
-            SearchMethod.Exact =>
-                string.Equals(asset.Name, searchText, StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(asset.Type, searchText, StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(asset.Container, searchText, StringComparison.OrdinalIgnoreCase),
-
-            SearchMethod.Contains =>
-                asset.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
-                asset.Type.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
-                asset.Container.Contains(searchText, StringComparison.OrdinalIgnoreCase),
-
-            SearchMethod.Fuzzy or SearchMethod.Regex =>
-                // Not implemented yet, fall back to contains
-                asset.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
-                asset.Type.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
-                asset.Container.Contains(searchText, StringComparison.OrdinalIgnoreCase),
-
-            _ => false
-        };
+        return SearchUtility.PerformStringMatch(asset.Name, searchText, searchMethod) ||
+               SearchUtility.PerformStringMatch(asset.Container, searchText, searchMethod) ||
+               SearchUtility.PerformStringMatch(asset.PathId.ToString(), searchText, searchMethod);
     }
 }

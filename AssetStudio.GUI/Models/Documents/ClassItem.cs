@@ -2,7 +2,7 @@ using System.ComponentModel;
 
 namespace AssetStudio.GUI.Models.Documents;
 
-public class ClassItem : INotifyPropertyChanged
+public sealed class ClassItem : INotifyPropertyChanged
 {
     private int _id;
     private string _className = string.Empty;
@@ -29,7 +29,7 @@ public class ClassItem : INotifyPropertyChanged
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    protected virtual void OnPropertyChanged(string propertyName)
+    private void OnPropertyChanged(string propertyName)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }

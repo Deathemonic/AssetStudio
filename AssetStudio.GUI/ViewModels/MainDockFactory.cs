@@ -10,7 +10,7 @@ using Dock.Model.Mvvm.Controls;
 
 namespace AssetStudio.GUI.ViewModels;
 
-internal class MainDockFactory(MainWindowViewModel mainWindow) : Factory
+internal class MainDockFactory : Factory
 {
     private AssetListDocumentViewModel? _assetListDocument;
     private ClassListDocumentViewModel? _classListDocument;
@@ -23,7 +23,7 @@ internal class MainDockFactory(MainWindowViewModel mainWindow) : Factory
     public override IRootDock CreateLayout()
     {
         _sceneHierarchyPanel = new SceneHierarchyPanelViewModel();
-        _assetListDocument = new AssetListDocumentViewModel { MainWindow = mainWindow };
+        _assetListDocument = new AssetListDocumentViewModel();
         _classListDocument = new ClassListDocumentViewModel();
 
         _previewPanel = new PreviewPanelViewModel();

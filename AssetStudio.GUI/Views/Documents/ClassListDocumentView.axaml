@@ -31,7 +31,7 @@
 
                 <ComboBox Name="FilterMethodCombo"
                           Grid.Column="0"
-                          SelectedIndex="0"
+                          SelectedIndex="{Binding SelectedSearchFilterMode}"
                           HorizontalAlignment="Stretch">
                     <ComboBoxItem Content="Fuzzy" />
                     <ComboBoxItem Content="Contains" />
@@ -41,7 +41,7 @@
 
                 <ComboBox Name="IncludeExcludeCombo"
                           Grid.Column="2"
-                          SelectedIndex="0"
+                          SelectedIndex="{Binding SelectedIncludeExcludeMode}"
                           HorizontalAlignment="Stretch">
                     <ComboBoxItem Content="Include" />
                     <ComboBoxItem Content="Exclude" />

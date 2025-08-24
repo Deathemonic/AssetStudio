@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using AssetStudio.GUI.Logic;
 using AssetStudio.GUI.Models.Documents;
 using Avalonia.Collections;
@@ -11,10 +12,10 @@ namespace AssetStudio.GUI.ViewModels.Documents;
 
 public partial class AssetListDocumentViewModel : Document
 {
-    [ObservableProperty] private DataGridCollectionView _collectionView;
-
+    [ObservableProperty] private DataGridCollectionView? _collectionView;
     [ObservableProperty] private string _searchText = string.Empty;
-
+    [ObservableProperty] private int _selectedIncludeExcludeMode;
+    [ObservableProperty] private ObservableCollection<AssetItem> _selectedItems = [];
     [ObservableProperty] private int _selectedSearchFilterMode;
 
     public AssetListDocumentViewModel()
@@ -22,30 +23,26 @@ public partial class AssetListDocumentViewModel : Document
         Id = "AssetList";
         Title = "Assets";
         CanClose = false;
+
         InitializeSampleData();
-        CollectionView = new DataGridCollectionView(Assets);
+        InitializeAssetTypeFilters();
+        RefreshView();
 
         PropertyChanged += OnPropertyChanged;
     }
 
-    public ObservableCollection<AssetItem> Assets { get; } = new();
-    public ObservableCollection<string> SearchHistory { get; } = new();
-
-    public MainWindowViewModel? MainWindow { get; set; }
+    public ObservableCollection<FilterAssetType> AssetTypeFilters { get; } = [];
+    private ObservableCollection<AssetItem> Assets { get; } = [];
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         switch (e.PropertyName)
         {
             case nameof(SearchText):
-                PerformSearch(SearchText, (SearchMethod)SelectedSearchFilterMode, IncludeExcludeMode.Include);
-                break;
             case nameof(SelectedSearchFilterMode):
-            {
-                if (!string.IsNullOrWhiteSpace(SearchText))
-                    PerformSearch(SearchText, (SearchMethod)SelectedSearchFilterMode, IncludeExcludeMode.Include);
+            case nameof(SelectedIncludeExcludeMode):
+                RefreshView();
                 break;
-            }
         }
     }
 
@@ -174,38 +171,83 @@ public partial class AssetListDocumentViewModel : Document
             Name = "enemy_death", Container = "sharedassets6.assets", Type = "AnimationClip", PathId = 7004,
             Size = 18432
         });
-
-        // Sample search history
-        SearchHistory.Add("Texture2D");
-        SearchHistory.Add("GameObject");
-        SearchHistory.Add("AudioClip");
-        SearchHistory.Add("player");
-        SearchHistory.Add("enemy");
     }
 
-    public bool PerformSearch(string searchText, SearchMethod searchMethod, IncludeExcludeMode includeMode)
+    private void RefreshView()
     {
-        if (string.IsNullOrWhiteSpace(searchText))
-        {
-            ClearSearch();
-            return true;
-        }
+        var selectedTypes = AssetTypeFilters.Where(x => x.IsSelected).Select(x => x.Name);
+        var filteredAssets = AssetSearch.PerformCompleteSearch(
+            Assets,
+            SearchText,
+            (SearchMethod)SelectedSearchFilterMode,
+            (IncludeExcludeMode)SelectedIncludeExcludeMode,
+            selectedTypes);
 
-        try
-        {
-            var filteredAssets = AssetSearch.FilterAssets(Assets, searchText, searchMethod, includeMode);
-            CollectionView = new DataGridCollectionView(new ObservableCollection<AssetItem>(filteredAssets));
+        CollectionView = new DataGridCollectionView(new ObservableCollection<AssetItem>(filteredAssets));
+    }
 
-            return true;
-        }
-        catch (Exception)
+    private void InitializeAssetTypeFilters()
+    {
+        foreach (var filter in AssetTypeFilters)
+            filter.PropertyChanged -= OnAssetTypeSelectionChanged;
+
+        AssetTypeFilters.Clear();
+
+        var allType = new FilterAssetType { Name = "All", IsSelected = true };
+        allType.PropertyChanged += OnAssetTypeSelectionChanged;
+        AssetTypeFilters.Add(allType);
+
+        var uniqueTypes = Assets
+            .Select(asset => asset.Type)
+            .Where(type => !string.IsNullOrEmpty(type))
+            .Distinct()
+            .OrderBy(type => type);
+
+        foreach (var type in uniqueTypes)
         {
-            return false;
+            var filterType = new FilterAssetType { Name = type, IsSelected = false };
+            filterType.PropertyChanged += OnAssetTypeSelectionChanged;
+            AssetTypeFilters.Add(filterType);
         }
     }
 
-    public void ClearSearch()
+    private void OnAssetTypeSelectionChanged(object? sender, PropertyChangedEventArgs e)
     {
-        CollectionView = new DataGridCollectionView(Assets);
+        if (e.PropertyName != nameof(FilterAssetType.IsSelected) ||
+            sender is not FilterAssetType changedType ||
+            !changedType.IsSelected)
+        {
+            RefreshView();
+            return;
+        }
+
+        HandleMutualExclusiveSelection(changedType);
+        RefreshView();
+    }
+
+    private void HandleMutualExclusiveSelection(FilterAssetType changedType)
+    {
+        if (changedType.Name == "All")
+            SetTypesSelection(type => type.Name != "All", false);
+        else
+            SetTypesSelection(type => type.Name == "All", false);
+    }
+
+    private void SetTypesSelection(Func<FilterAssetType, bool> predicate, bool isSelected)
+    {
+        var typesToUpdate = AssetTypeFilters.Where(predicate).Where(t => t.IsSelected != isSelected).ToList();
+
+        foreach (var type in typesToUpdate)
+        {
+            type.PropertyChanged -= OnAssetTypeSelectionChanged;
+            type.IsSelected = isSelected;
+            type.PropertyChanged += OnAssetTypeSelectionChanged;
+        }
+    }
+
+    public void RefreshAssetTypeFilters()
+    {
+        InitializeAssetTypeFilters();
+        RefreshView();
     }
 }

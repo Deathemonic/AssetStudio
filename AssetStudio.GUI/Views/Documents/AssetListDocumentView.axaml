@@ -42,7 +42,7 @@
 
                 <ComboBox Name="IncludeExcludeCombo"
                           Grid.Column="2"
-                          SelectedIndex="0"
+                          SelectedIndex="{Binding SelectedIncludeExcludeMode}"
                           HorizontalAlignment="Stretch">
                     <ComboBoxItem Content="Include" />
                     <ComboBoxItem Content="Exclude" />
@@ -50,16 +50,38 @@
 
                 <ComboBox Name="FilterAssetTypeCombo"
                           Grid.Column="4"
-                          SelectedIndex="0"
-                          HorizontalAlignment="Stretch">
-                    <ComboBoxItem Content="All" />
-                    <ComboBoxItem Content="GameObject" />
-                    <ComboBoxItem Content="Texture2D" />
-                    <ComboBoxItem Content="Material" />
-                    <ComboBoxItem Content="AudioClip" />
-                    <ComboBoxItem Content="Mesh" />
-                    <ComboBoxItem Content="MonoBehaviour" />
-                    <ComboBoxItem Content="AnimationClip" />
+                          ItemsSource="{Binding AssetTypeFilters}"
+                          HorizontalAlignment="Stretch"
+                          MaxDropDownHeight="200">
+                    <ComboBox.ItemContainerTheme>
+                        <ControlTheme TargetType="ComboBoxItem">
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="Padding" Value="0" />
+                            <Setter Property="Margin" Value="0" />
+                            <Setter Property="Template">
+                                <ControlTemplate>
+                                    <Border Background="{TemplateBinding Background}"
+                                            Padding="{TemplateBinding Padding}"
+                                            PointerPressed="OnComboBoxItemPointerPressed">
+                                        <ContentPresenter Content="{TemplateBinding Content}"
+                                                          ContentTemplate="{TemplateBinding ContentTemplate}" />
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter>
+                        </ControlTheme>
+                    </ComboBox.ItemContainerTheme>
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox Content="{Binding Name}"
+                                      IsChecked="{Binding IsSelected}"
+                                      Margin="4,2" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                    <ComboBox.SelectionBoxItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="Asset Types" />
+                        </DataTemplate>
+                    </ComboBox.SelectionBoxItemTemplate>
                 </ComboBox>
             </Grid>
         </StackPanel>

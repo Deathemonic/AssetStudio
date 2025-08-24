@@ -26,7 +26,7 @@ public partial class SceneHierarchyPanelViewModel : Tool
         };
     }
 
-    public ObservableCollection<TreeNodeItem> SceneHierarchy { get; } = new();
+    public ObservableCollection<TreeNodeItem> SceneHierarchy { get; } = [];
 
     private void InitializeSampleData()
     {
