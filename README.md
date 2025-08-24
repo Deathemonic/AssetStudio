@@ -1,10 +1,6 @@
 # AssetStudio
 
-[![Release](https://img.shields.io/github/v/release/Deathemonic/AssetStudio)](https://github.com/aelurum/AssetStudio/releases/latest) [![Download latest release](https://img.shields.io/badge/Download_latest_release-blue)](https://github.com/Deathemonic/AssetStudio/releases/latest)
-
-**AssetStudio** - Modified version of aelurum's [AssetStudioMod](https://github.com/aelurum/AssetStudio)
-
-**Neither the repository, nor the tool, nor the author of the tool, nor the author of the modification is affiliated with, sponsored, or authorized by Unity Technologies or its affiliates.**
+Is a tool for exploring, extracting and exporting assets and assetbundles.
 
 ## AssetStudio Features
 
@@ -153,13 +149,13 @@ AssetStudioModCLI <asset folder path> -m dump -t material --load-all
 
 ### Load Assets/AssetBundles
 
-Use **File->Load file** or **File->Load folder**.
+Use **File → Load file** or **File → Load folder**.
 
-When AssetStudio loads AssetBundles, it decompresses and reads it directly in memory, which may cause a large amount of memory to be used. You can use **File->Extract file** or **File->Extract folder** to extract AssetBundles to another folder, and then read.
+When AssetStudio loads AssetBundles, it decompresses and reads it directly in memory, which may cause a large amount of memory to be used. You can use **File → Extract file** or **File → Extract folder** to extract AssetBundles to another folder, and then read.
 
 ### Extract/Decompress AssetBundles
 
-Use **File->Extract file** or **File->Extract folder**.
+Use **File → Extract file** or **File → Extract folder**.
 
 ### Export Assets, Live2D models
 
@@ -173,9 +169,9 @@ Export Animator from "Asset List" using the **Export** menu.
 
 #### With AnimationClip
 
-Select model from "Scene Hierarchy" then select the AnimationClip from "Asset List", using **Model->Export selected objects with AnimationClip** to export.
+Select model from "Scene Hierarchy" then select the AnimationClip from "Asset List", using **Model → Export selected objects with AnimationClip** to export.
 
-Export Animator will export bound AnimationClip or use **Ctrl** to select Animator and AnimationClip from "Asset List", using **Export->Export Animator with selected AnimationClip** to export.
+Export Animator will export bound AnimationClip or use **Ctrl** to select Animator and AnimationClip from "Asset List", using **Export → Export Animator with selected AnimationClip** to export.
 
 ### Export MonoBehaviour
 
@@ -183,7 +179,7 @@ When you select an asset of the MonoBehaviour type for the first time, AssetStud
 
 #### For Il2Cpp
 
-First, use [Il2CppDumper](https://github.com/Perfare/Il2CppDumper) to generate dummy dll, then when using AssetStudio to select the assembly directory, select the dummy dll folder.
+First, use [Il2CppInspectorRedux](https://github.com/LukeFZ/Il2CppInspectorRedux) to generate dummy dll, then when using AssetStudio to select the assembly directory, select the dummy dll folder.
 
 ### Build
 
@@ -195,3 +191,6 @@ First, use [Il2CppDumper](https://github.com/Perfare/Il2CppDumper) to generate d
 - [BinomialLLC/crunch](https://github.com/BinomialLLC/crunch) - Texture2D
 - [Unity-Technologies/crunch](https://github.com/Unity-Technologies/crunch/tree/unity) - Texture2D
 - [nesrak1/UABEANext](https://github.com/nesrak1/UABEANext) - GUI
+
+### Disclaimer
+Neither the repository, nor the tool, nor the author of the tool, nor the author of the modification is affiliated with, sponsored, or authorized by Unity Technologies or its affiliates.
