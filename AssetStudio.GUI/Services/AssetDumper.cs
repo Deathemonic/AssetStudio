@@ -2,7 +2,10 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text.Json;
+using AssetStudio;
 using AssetStudio.GUI.Models.Panels;
+
+// Idk I probably should use AssetTools.NET for dumping
 
 namespace AssetStudio.GUI.Services;
 
@@ -10,7 +13,7 @@ public class AssetDumper(AssetsManager assetsManager)
 {
     private static readonly AssemblyLoader AssemblyLoader = new();
 
-    public TreeNodeItem DumpAssetToTree(long pathId)
+    public TreeNodeItem? DumpAssetToTree(long pathId)
     {
         try
         {
@@ -19,7 +22,16 @@ public class AssetDumper(AssetsManager assetsManager)
                          .OfType<Object>())
             {
                 var jsonDoc = DumpAssetToJsonDoc(asset);
-                if (jsonDoc != null) return JsonToTreeNode(jsonDoc.RootElement, $"{asset.type} (PathID: {pathId})");
+                if (jsonDoc != null) 
+                {
+                    return JsonToTreeNode(jsonDoc.RootElement, $"{asset.type} (PathID: {pathId})");
+                }
+
+                var dumpText = DumpAssetToString(asset);
+                if (!string.IsNullOrEmpty(dumpText))
+                {
+                    return StringToTreeNode(dumpText, $"{asset.type} (PathID: {pathId})");
+                }
             }
         }
         catch (Exception ex)
@@ -53,6 +65,51 @@ public class AssetDumper(AssetsManager assetsManager)
         {
             return null;
         }
+    }
+
+    private static string DumpAssetToString(Object obj)
+    {
+        var str = obj.Dump();
+        if (str == null && obj is MonoBehaviour m_MonoBehaviour)
+        {
+            var type = MonoBehaviourToTypeTree(m_MonoBehaviour);
+            if (type != null)
+            {
+                str = m_MonoBehaviour.Dump(type);
+            }
+        }
+        if (string.IsNullOrEmpty(str))
+        {
+            str = obj.DumpObject();
+        }
+        return str ?? string.Empty;
+    }
+
+    private static TreeNodeItem StringToTreeNode(string text, string name)
+    {
+        var rootNode = new TreeNodeItem { Name = name, Children = [] };
+
+        if (string.IsNullOrEmpty(text))
+        {
+            rootNode.Children.Add(new TreeNodeItem { Name = "No data available", Children = [] });
+            return rootNode;
+        }
+
+        var lines = text.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+        foreach (var line in lines.Take(100))
+        {
+            var trimmedLine = line.Trim();
+            if (!string.IsNullOrEmpty(trimmedLine))
+            {
+                rootNode.Children.Add(new TreeNodeItem 
+                { 
+                    Name = trimmedLine, 
+                    Children = [] 
+                });
+            }
+        }
+
+        return rootNode;
     }
 
     private static TreeNodeItem JsonToTreeNode(JsonElement element, string name)
