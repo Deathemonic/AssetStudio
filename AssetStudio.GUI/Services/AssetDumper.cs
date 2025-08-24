@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text.Json;
-using AssetStudio;
 using AssetStudio.GUI.Models.Panels;
 
 // Idk I probably should use AssetTools.NET for dumping
@@ -13,7 +11,7 @@ public class AssetDumper(AssetsManager assetsManager)
 {
     private static readonly AssemblyLoader AssemblyLoader = new();
 
-    public TreeNodeItem? DumpAssetToTree(long pathId)
+    public TreeNodeItem DumpAssetToTree(long pathId)
     {
         try
         {
