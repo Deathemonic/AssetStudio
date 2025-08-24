@@ -23,7 +23,6 @@ public class ViewLocator : IDataTemplate
         
         var instance = (Control)Activator.CreateInstance(type)!;
         return instance;
-
     }
 
     public bool Match(object? data)

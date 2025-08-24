@@ -8,17 +8,19 @@
              x:DataType="vm:DumpPanelViewModel">
 
     <Design.DataContext>
-        <vm:DumpPanelViewModel/>
+        <vm:DumpPanelViewModel />
     </Design.DataContext>
 
     <DockPanel>
-        <TextBox Name="DumpTextBox" 
-                 AcceptsReturn="True"
-                 IsReadOnly="True"
-                 TextWrapping="Wrap"
-                 FontFamily="Consolas"
-                 Background="White"
-                 Text="{Binding DumpText}" />
+        <TreeView Name="DumpTreeView"
+                  SelectionMode="Multiple"
+                  ItemsSource="{Binding DumpTree}">
+            <TreeView.ItemTemplate>
+                <TreeDataTemplate ItemsSource="{Binding Children}">
+                    <TextBlock Text="{Binding Name}" />
+                </TreeDataTemplate>
+            </TreeView.ItemTemplate>
+        </TreeView>
     </DockPanel>
 
 </UserControl>

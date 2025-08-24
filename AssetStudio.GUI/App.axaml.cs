@@ -6,7 +6,7 @@ using AssetStudio.GUI.Views;
 
 namespace AssetStudio.GUI;
 
-public partial class App : Application
+public class App : Application
 {
     public override void Initialize()
     {

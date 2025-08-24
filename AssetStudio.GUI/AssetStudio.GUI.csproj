@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <AssemblyTitle>AssetStudio</AssemblyTitle>
-    <AssemblyName>AssetStudio</AssemblyName>
+    <AssemblyTitle>AssetStudio GUI</AssemblyTitle>
+    <AssemblyName>AssetStudio.GUI</AssemblyName>
   </PropertyGroup>
-
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net9.0</TargetFramework>
+<!--    <TargetName>AssetStudio</TargetName>-->
     <Nullable>enable</Nullable>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -37,5 +37,10 @@
     <PackageReference Include="Dock.Avalonia.Themes.Simple" Version="11.3.2.2" />
     <PackageReference Include="Dock.Model.Mvvm" Version="11.3.2.2" />
     <PackageReference Include="Dock.Serializer.Newtonsoft" Version="11.3.2.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+      <ProjectReference Include="..\AssetStudio\AssetStudio.csproj" />
+      <ProjectReference Include="..\AssetStudioUtility\AssetStudioUtility.csproj" />
   </ItemGroup>
 </Project>

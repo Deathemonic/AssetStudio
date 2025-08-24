@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using AssetStudio.GUI.Models.Documents;
+using AssetStudio.GUI.Models.Panels;
 using AssetStudio.GUI.ViewModels.Documents;
 using AssetStudio.GUI.ViewModels.Panels;
 using Dock.Avalonia.Controls;
@@ -20,6 +22,8 @@ internal class MainDockFactory : Factory
     private IRootDock? _rootDock;
     private SceneHierarchyPanelViewModel? _sceneHierarchyPanel;
 
+    public Func<long, string, TreeNodeItem?>? AssetDumpFunction { get; set; }
+
     public override IRootDock CreateLayout()
     {
         _sceneHierarchyPanel = new SceneHierarchyPanelViewModel();
@@ -28,6 +32,9 @@ internal class MainDockFactory : Factory
 
         _previewPanel = new PreviewPanelViewModel();
         _dumpPanel = new DumpPanelViewModel();
+
+        // Setup asset selection event
+        _assetListDocument.AssetSelected += OnAssetSelected;
 
         var documentDock = _fileDocumentDock = new DocumentDock
         {
@@ -117,5 +124,19 @@ internal class MainDockFactory : Factory
         };
 
         base.InitLayout(layout);
+    }
+
+    public void UpdateAssetData(List<AssetItem> assets, List<ClassItem> classes, List<TreeNodeItem> sceneHierarchy)
+    {
+        _assetListDocument?.UpdateData(assets);
+        _classListDocument?.UpdateData(classes);
+        _sceneHierarchyPanel?.UpdateData(sceneHierarchy);
+    }
+
+    private void OnAssetSelected(AssetItem asset)
+    {
+        if (_dumpPanel == null || AssetDumpFunction == null) return;
+        var dumpTree = AssetDumpFunction(asset.PathId, asset.Container);
+        _dumpPanel.UpdateDump(dumpTree);
     }
 }

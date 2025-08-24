@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using AssetStudio.GUI.Logic;
 
-namespace AssetStudio.GUI.Logic;
+namespace AssetStudio.GUI.Utils;
 
 public static class SearchUtility
 {
