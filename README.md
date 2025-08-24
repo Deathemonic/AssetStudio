@@ -193,4 +193,4 @@ First, use [Il2CppInspectorRedux](https://github.com/LukeFZ/Il2CppInspectorRedux
 - [nesrak1/UABEANext](https://github.com/nesrak1/UABEANext) - GUI
 
 ### Disclaimer
-Neither the repository, nor the tool, nor the author of the tool, nor the author of the modification is affiliated with, sponsored, or authorized by Unity Technologies or its affiliates.
+Neither the repository, the tool, its original author, nor any fork maintainers are affiliated with, sponsored by, or authorized by Unity Technologies or its affiliates.
